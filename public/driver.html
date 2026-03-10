@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>FleetInspect — Inspection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080a;--surface:#0e1014;--surface2:#151820;--surface3:#1c2028;
+  --border:#1c2028;--border2:#252c38;
+  --white:#eceae3;--dim:#8a9090;--muted:#3a4048;
+  --accent:#c8f135;--accent2:#9bc41f;
+  --green:#36c97e;--red:#f04e4e;--orange:#e88a00;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--white);font-family:'IBM Plex Mono',monospace;min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;overscroll-behavior:none}
+
+.header{position:sticky;top:0;z-index:100;background:rgba(7,8,10,.97);border-bottom:1px solid var(--border2);padding:13px 18px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(8px)}
+.logo{display:flex;align-items:center;gap:9px}
+.logo-mark{width:24px;height:24px;background:var(--accent);display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:13px;height:13px}
+.logo-text{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;letter-spacing:.5px;text-transform:uppercase}
+.logo-text em{color:var(--accent);font-style:normal}
+.hdr-right{display:flex;align-items:center;gap:10px}
+.driver-pill{text-align:right;line-height:1.35}
+.driver-pill strong{font-size:12px;color:var(--white);display:block;font-weight:500}
+.driver-pill span{font-size:10px;color:var(--dim)}
+.btn-sm{background:none;border:1px solid var(--border2);color:var(--dim);padding:6px 11px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:color .15s,border-color .15s}
+.btn-sm:hover{color:var(--white);border-color:var(--dim)}
+
+.screen{display:none;flex-direction:column;flex:1}
+.screen.active{display:flex}
+
+/* ── HOME ─────────────────────────────────── */
+.home-hero{padding:32px 18px 24px;border-bottom:1px solid var(--border2);background:linear-gradient(180deg,var(--surface) 0%,var(--bg) 100%)}
+.home-tag{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.home-tag::before{content:'';width:14px;height:1px;background:var(--accent)}
+.home-hero h2{font-family:'Barlow Condensed',sans-serif;font-size:clamp(34px,9vw,52px);font-weight:800;line-height:.95;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.home-hero h2 span{color:var(--accent)}
+.home-hero p{font-size:11px;color:var(--dim);line-height:1.7;max-width:260px}
+.btn-start{display:flex;align-items:center;justify-content:space-between;width:calc(100% - 36px);margin:20px 18px 0;background:var(--accent);color:var(--bg);border:none;padding:19px 22px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:opacity .2s}
+.btn-start:hover{opacity:.88}
+.info-tiles{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border2);margin-top:1px}
+.info-tile{background:var(--surface);padding:16px 18px}
+.tile-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
+.tile-val{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--white)}
+.loc-bar{display:flex;align-items:center;gap:7px;padding:9px 18px;font-size:10px;color:var(--dim);border-bottom:1px solid var(--border)}
+.loc-dot{width:5px;height:5px;border-radius:50%;background:var(--muted);flex-shrink:0}
+.loc-dot.on{background:var(--green);animation:blink 2s infinite}
+.loc-dot.err{background:var(--red)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.recent-wrap{padding:18px;flex:1;overflow-y:auto}
+.sec-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
+.insp-row{border:1px solid var(--border2);padding:13px 14px;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.insp-row-left{}
+.insp-row-date{font-size:10px;color:var(--dim);margin-bottom:2px}
+.insp-row-info{font-size:12px;color:var(--white)}
+.badge{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 7px;border:1px solid;flex-shrink:0}
+.badge.submitted{color:var(--green);border-color:rgba(54,201,126,.3);background:rgba(54,201,126,.06)}
+.badge.in_progress{color:var(--orange);border-color:rgba(232,138,0,.3);background:rgba(232,138,0,.06)}
+.empty-hint{font-size:11px;color:var(--dim);padding:10px 0}
+
+/* ── INSPECT ──────────────────────────────── */
+.progress-strip{padding:14px 18px;border-bottom:1px solid var(--border2);background:var(--surface);flex-shrink:0}
+.prog-meta{display:flex;justify-content:space-between;margin-bottom:9px;font-size:10px}
+.prog-name{color:var(--white);font-weight:500;letter-spacing:.3px}
+.prog-counter{color:var(--dim)}
+.prog-bar{height:2px;background:var(--border2)}
+.prog-fill{height:100%;background:var(--accent);transition:width .35s cubic-bezier(.4,0,.2,1)}
+.step-dots{display:flex;gap:4px;margin-top:9px}
+.step-dot{width:4px;height:4px;border-radius:50%;background:var(--border2);transition:all .2s}
+.step-dot.active{background:var(--accent);width:12px;border-radius:2px}
+.step-dot.done{background:var(--accent2)}
+
+.inspect-body{flex:1;display:flex;flex-direction:column;overflow-y:auto;padding:22px 18px;gap:18px}
+.step-tag{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--dim)}
+.step-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(28px,8vw,40px);font-weight:800;letter-spacing:1px;text-transform:uppercase;line-height:.95;color:var(--white);margin-top:4px}
+.step-desc{font-size:11px;color:var(--dim);line-height:1.7}
+
+.photo-zone{position:relative;width:100%;aspect-ratio:4/3;background:var(--surface);border:1px solid var(--border2);cursor:pointer;overflow:hidden;transition:border-color .2s}
+.photo-zone:hover{border-color:var(--accent)}
+.photo-zone.captured{border-color:var(--accent2);cursor:default}
+.photo-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--dim)}
+.photo-placeholder-icon{width:48px;height:48px;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center}
+.photo-placeholder-icon svg{width:22px;height:22px}
+.photo-placeholder-text{font-size:10px;letter-spacing:2px;text-transform:uppercase}
+.photo-placeholder-sub{font-size:9px;color:var(--muted);margin-top:-5px}
+.photo-preview{display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.photo-ok{display:none;position:absolute;top:8px;right:8px;background:rgba(54,201,126,.15);border:1px solid rgba(54,201,126,.3);color:var(--green);font-size:9px;padding:3px 7px;letter-spacing:1.5px;text-transform:uppercase}
+.upload-overlay{display:none;position:absolute;inset:0;background:rgba(7,8,10,.85);align-items:center;justify-content:center;flex-direction:column;gap:10px}
+.spinner{width:28px;height:28px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+.upload-overlay span{font-size:10px;color:var(--dim);letter-spacing:1px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.photo-actions{display:flex;gap:7px}
+.btn-retake{display:none;flex:1;background:none;border:1px solid var(--border2);color:var(--dim);padding:12px 14px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:color .15s,border-color .15s}
+.btn-retake:hover{color:var(--white);border-color:var(--dim)}
+.btn-camera{flex:2;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--surface);border:1px solid var(--border2);color:var(--dim);padding:13px 14px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .15s}
+.btn-camera:hover{color:var(--white);border-color:var(--accent)}
+.btn-camera svg{width:13px;height:13px}
+.photo-err{display:none;font-size:10px;color:var(--red);padding:9px 12px;background:rgba(240,78,78,.07);border:1px solid rgba(240,78,78,.2)}
+
+.inspect-nav{display:flex;gap:1px;background:var(--border2);border-top:1px solid var(--border2);flex-shrink:0}
+.btn-back-step{flex:1;background:var(--surface);border:none;color:var(--dim);padding:18px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:color .15s}
+.btn-back-step:hover{color:var(--white)}
+.btn-next-step{flex:2;background:var(--surface2);border:none;color:var(--muted);padding:18px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.btn-next-step:not(:disabled){color:var(--white)}
+.btn-next-step.ready:not(:disabled){background:var(--accent);color:var(--bg)}
+.btn-next-step:disabled{cursor:not-allowed;opacity:.4}
+
+/* ── REVIEW ───────────────────────────────── */
+.review-top{padding:24px 18px 18px;border-bottom:1px solid var(--border2);background:var(--surface);flex-shrink:0}
+.review-tag{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+.review-title{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+.review-body{flex:1;overflow-y:auto;padding:18px}
+.review-sub-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+.review-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border2);margin-bottom:22px}
+.r-thumb{position:relative;aspect-ratio:1;background:var(--surface);overflow:hidden;cursor:pointer}
+.r-thumb img{width:100%;height:100%;object-fit:cover}
+.r-thumb-num{position:absolute;bottom:3px;right:5px;font-size:9px;color:rgba(255,255,255,.6);background:rgba(0,0,0,.55);padding:1px 3px}
+.r-thumb-check{position:absolute;top:4px;left:4px;width:15px;height:15px;background:rgba(54,201,126,.2);border:1px solid rgba(54,201,126,.5);display:flex;align-items:center;justify-content:center}
+.r-thumb-check svg{width:8px;height:8px}
+.r-thumb-missing{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--red);letter-spacing:1px;text-transform:uppercase}
+.detail-rows{display:flex;flex-direction:column;gap:1px;background:var(--border2);margin-bottom:16px}
+.detail-row{background:var(--surface);display:flex;justify-content:space-between;align-items:center;padding:10px 14px;gap:10px}
+.detail-row .k{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim)}
+.detail-row .v{font-size:12px;color:var(--white);text-align:right}
+.detail-row .v a{color:var(--accent);text-decoration:none}
+.notes-ta{display:block;width:100%;background:var(--surface);border:1px solid var(--border2);color:var(--white);padding:12px 14px;font-family:'IBM Plex Mono',monospace;font-size:12px;resize:none;height:72px;outline:none;transition:border-color .2s;margin-bottom:16px}
+.notes-ta:focus{border-color:var(--accent)}
+.notes-ta::placeholder{color:var(--muted)}
+.btn-submit{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--accent);color:var(--bg);border:none;padding:19px 22px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:opacity .2s}
+.btn-submit:hover{opacity:.88}
+.btn-submit:disabled{opacity:.4;cursor:not-allowed}
+.btn-go-back{display:block;width:100%;background:none;border:1px solid var(--border2);color:var(--dim);padding:13px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;margin-top:8px;transition:color .15s}
+.btn-go-back:hover{color:var(--white)}
+
+/* ── SUCCESS ──────────────────────────────── */
+.success-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 18px;text-align:center}
+.success-icon{width:68px;height:68px;border:1px solid rgba(54,201,126,.3);background:rgba(54,201,126,.07);display:flex;align-items:center;justify-content:center;margin-bottom:24px}
+.success-icon svg{width:30px;height:30px}
+.success-tag{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+.success-title{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.success-sub{font-size:11px;color:var(--dim);line-height:1.7;margin-bottom:36px}
+.btn-new-insp{display:flex;align-items:center;gap:10px;background:var(--accent);color:var(--bg);border:none;padding:17px 26px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:opacity .2s}
+.btn-new-insp:hover{opacity:.88}
+
+#cameraInput{display:none}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <div class="logo-mark"><svg viewBox="0 0 16 16" fill="none"><rect x="1" y="5" width="14" height="2" fill="#07080a"/><rect x="1" y="9" width="14" height="2" fill="#07080a"/><rect x="3" y="1" width="10" height="2" fill="#07080a"/><circle cx="12" cy="13" r="2" fill="#07080a"/><circle cx="4" cy="13" r="2" fill="#07080a"/></svg></div>
+    <div class="logo-text">Fleet<em>Inspect</em></div>
+  </div>
+  <div class="hdr-right">
+    <div class="driver-pill">
+      <strong id="driverName">Driver</strong>
+      <span id="truckInfo">Loading...</span>
+    </div>
+    <button class="btn-sm" onclick="logout()">Exit</button>
+  </div>
+</header>
+
+<input type="file" id="cameraInput" accept="image/*" capture="environment">
+
+<!-- HOME -->
+<div class="screen active" id="screenHome">
+  <div class="home-hero">
+    <div class="home-tag">Pre-Trip Inspection</div>
+    <h2>Ready To<br>Inspect<span>.</span></h2>
+    <p>Step-by-step vehicle inspection. Live camera required for each photo.</p>
+  </div>
+  <button class="btn-start" onclick="startInspection()">
+    <span>Begin Inspection</span><span>&#8594;</span>
+  </button>
+  <div class="info-tiles">
+    <div class="info-tile"><div class="tile-label">Driver</div><div class="tile-val" id="infoName">—</div></div>
+    <div class="info-tile"><div class="tile-label">Truck</div><div class="tile-val" id="infoTruck">—</div></div>
+    <div class="info-tile"><div class="tile-label">Truck No.</div><div class="tile-val" id="infoNum">—</div></div>
+    <div class="info-tile"><div class="tile-label">Steps</div><div class="tile-val" id="infoSteps">—</div></div>
+  </div>
+  <div class="loc-bar">
+    <div class="loc-dot" id="locDot"></div>
+    <span id="locText">Requesting location...</span>
+  </div>
+  <div class="recent-wrap">
+    <div class="sec-label">Recent Inspections</div>
+    <div id="recentList"><div class="empty-hint">No inspections yet</div></div>
+  </div>
+</div>
+
+<!-- INSPECT -->
+<div class="screen" id="screenInspect">
+  <div class="progress-strip">
+    <div class="prog-meta">
+      <span class="prog-name" id="stepName">Step 1</span>
+      <span class="prog-counter" id="stepCounter">1 / 8</span>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="step-dots" id="stepDots"></div>
+  </div>
+
+  <div class="inspect-body">
+    <div>
+      <div class="step-tag" id="stepTag">Step 1 of 8</div>
+      <div class="step-title" id="stepTitle">Front Exterior</div>
+      <div class="step-desc" id="stepDesc" style="margin-top:6px"></div>
+    </div>
+
+    <div class="photo-zone" id="photoZone" onclick="triggerCamera()">
+      <div class="photo-placeholder" id="photoPlaceholder">
+        <div class="photo-placeholder-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+        <div class="photo-placeholder-text">Tap to Capture</div>
+        <div class="photo-placeholder-sub">Live camera only</div>
+      </div>
+      <img class="photo-preview" id="photoPreview" src="" alt="">
+      <div class="upload-overlay" id="uploadOverlay">
+        <div class="spinner"></div>
+        <span>Uploading...</span>
+      </div>
+      <div class="photo-ok" id="photoOk">Captured</div>
+    </div>
+
+    <div class="photo-err" id="photoErr"></div>
+
+    <div class="photo-actions">
+      <button class="btn-retake" id="retakeBtn" onclick="retake(event)">Retake</button>
+      <button class="btn-camera" id="cameraBtn" onclick="triggerCamera()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Open Camera
+      </button>
+    </div>
+  </div>
+
+  <div class="inspect-nav">
+    <button class="btn-back-step" onclick="prevStep()">&#8592; Back</button>
+    <button class="btn-next-step" id="btnNext" onclick="nextStep()" disabled>Continue</button>
+  </div>
+</div>
+
+<!-- REVIEW -->
+<div class="screen" id="screenReview">
+  <div class="review-top">
+    <div class="review-tag">Review &amp; Submit</div>
+    <div class="review-title">All Steps<br>Complete.</div>
+  </div>
+  <div class="review-body">
+    <div class="review-sub-label" style="margin-bottom:10px">Photos — <span id="reviewCount">0</span> captured</div>
+    <div class="review-grid" id="reviewGrid"></div>
+
+    <div class="review-sub-label">Inspection Details</div>
+    <div class="detail-rows">
+      <div class="detail-row"><span class="k">Driver</span><span class="v" id="revDriver">—</span></div>
+      <div class="detail-row"><span class="k">Truck</span><span class="v" id="revTruck">—</span></div>
+      <div class="detail-row"><span class="k">Truck No.</span><span class="v" id="revNum">—</span></div>
+      <div class="detail-row"><span class="k">Date / Time</span><span class="v" id="revTime">—</span></div>
+      <div class="detail-row"><span class="k">GPS Location</span><span class="v" id="revLocation">—</span></div>
+    </div>
+
+    <div class="review-sub-label" style="margin-bottom:8px">Notes (optional)</div>
+    <textarea class="notes-ta" id="notesInput" placeholder="Any additional remarks..."></textarea>
+
+    <button class="btn-submit" id="btnSubmit" onclick="submitInspection()">
+      <span id="submitTxt">Submit Inspection</span><span>&#8594;</span>
+    </button>
+    <button class="btn-go-back" onclick="backToLastStep()">&#8592; Back to Photos</button>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="screen" id="screenSuccess">
+  <div class="success-wrap">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#36c97e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="success-tag">Submitted</div>
+    <div class="success-title">Inspection<br>Complete.</div>
+    <p class="success-sub">Your inspection has been sent to<br>the dispatcher. All photos and<br>GPS data have been recorded.</p>
+    <button class="btn-new-insp" onclick="newInspection()">New Inspection &#8594;</button>
+  </div>
+</div>
+
+<script>
+let STEPS = [];
+let state = { step:0, inspectionId:null, photos:{}, location:null, user:null };
+
+async function init() {
+  try {
+    const [meRes, stepsRes] = await Promise.all([fetch('/api/me'), fetch('/api/inspection-steps')]);
+    if (!meRes.ok) { window.location.href='/login'; return; }
+    const user = await meRes.json();
+    if (user.role !== 'driver') { window.location.href='/agent/dashboard'; return; }
+    STEPS = await stepsRes.json();
+    state.user = user;
+    document.getElementById('driverName').textContent = user.name||user.username;
+    document.getElementById('truckInfo').textContent = [user.truck_model, user.truck_number].filter(Boolean).join(' — ') || 'No truck';
+    document.getElementById('infoName').textContent  = user.name||'—';
+    document.getElementById('infoTruck').textContent = user.truck_model||'—';
+    document.getElementById('infoNum').textContent   = user.truck_number||'—';
+    document.getElementById('infoSteps').textContent = STEPS.length + ' steps';
+    loadRecent();
+    initGPS();
+  } catch(e) { window.location.href='/login'; }
+}
+
+function initGPS() {
+  if (!navigator.geolocation) { setLoc(false,'GPS not available'); return; }
+  navigator.geolocation.getCurrentPosition(
+    p => { state.location={lat:p.coords.latitude,lng:p.coords.longitude}; setLoc(true,`GPS locked — ${p.coords.latitude.toFixed(4)}, ${p.coords.longitude.toFixed(4)}`); },
+    () => setLoc(false,'Location access denied'),
+    {enableHighAccuracy:true,timeout:12000}
+  );
+}
+function setLoc(ok,txt) {
+  document.getElementById('locDot').className='loc-dot '+(ok?'on':'err');
+  document.getElementById('locText').textContent=txt;
+}
+
+async function loadRecent() {
+  try {
+    const res = await fetch('/api/driver/inspections');
+    const data = await res.json();
+    const el = document.getElementById('recentList');
+    if (!data.length) { el.innerHTML='<div class="empty-hint">No inspections yet</div>'; return; }
+    el.innerHTML = data.slice(0,5).map(i=>`
+      <div class="insp-row">
+        <div class="insp-row-left">
+          <div class="insp-row-date">${fmtDate(i.submitted_at||i.started_at)}</div>
+          <div class="insp-row-info">${i.photo_count} photo${i.photo_count!==1?'s':''} captured</div>
+        </div>
+        <div class="badge ${i.status}">${i.status==='submitted'?'Submitted':'In Progress'}</div>
+      </div>`).join('');
+  } catch(e) {}
+}
+
+async function startInspection() {
+  if (!STEPS.length) { alert('No inspection steps configured. Contact your dispatcher.'); return; }
+  try {
+    const res = await fetch('/api/inspections/start',{method:'POST'});
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    state.inspectionId=data.inspectionId;
+    state.step=0;
+    state.photos={};
+    renderStep();
+    showScreen('screenInspect');
+  } catch(e) { alert('Could not start inspection. Check connection.'); }
+}
+
+function renderStep() {
+  const i=state.step, s=STEPS[i];
+  document.getElementById('stepCounter').textContent=`${i+1} / ${STEPS.length}`;
+  document.getElementById('progFill').style.width=`${(i/STEPS.length)*100}%`;
+  document.getElementById('stepName').textContent=s.label;
+  document.getElementById('stepTag').textContent=`Step ${i+1} of ${STEPS.length}`;
+  document.getElementById('stepTitle').textContent=s.label;
+  document.getElementById('stepDesc').textContent=s.instruction;
+
+  const dots=document.getElementById('stepDots');
+  dots.innerHTML=STEPS.map((_,j)=>`<div class="step-dot${j<i?' done':j===i?' active':''}"></div>`).join('');
+
+  const p=state.photos[i];
+  const prev=document.getElementById('photoPreview');
+  const ph=document.getElementById('photoPlaceholder');
+  const ok=document.getElementById('photoOk');
+  const rb=document.getElementById('retakeBtn');
+  const cb=document.getElementById('cameraBtn');
+  const pz=document.getElementById('photoZone');
+  const bn=document.getElementById('btnNext');
+  const pe=document.getElementById('photoErr');
+  pe.style.display='none';
+  document.getElementById('uploadOverlay').style.display='none';
+
+  if (p) {
+    prev.src=p.path; prev.style.display='block'; ph.style.display='none';
+    ok.style.display='block'; rb.style.display='block'; cb.style.display='none';
+    pz.classList.add('captured'); pz.onclick=null;
+    bn.disabled=false;
+    bn.className='btn-next-step'+(i===STEPS.length-1?' ready':'');
+    bn.textContent=i===STEPS.length-1?'Review & Submit':'Continue';
+  } else {
+    prev.style.display='none'; ph.style.display='flex';
+    ok.style.display='none'; rb.style.display='none'; cb.style.display='flex';
+    pz.classList.remove('captured'); pz.onclick=triggerCamera;
+    bn.disabled=true; bn.className='btn-next-step'; bn.textContent='Continue';
+  }
+}
+
+function triggerCamera() { document.getElementById('cameraInput').click(); }
+function retake(e) { e.stopPropagation(); state.photos[state.step]=null; renderStep(); document.getElementById('cameraInput').click(); }
+
+document.getElementById('cameraInput').addEventListener('change', async function() {
+  const file=this.files[0]; if (!file) return;
+  const i=state.step;
+  const prev=document.getElementById('photoPreview');
+  const ph=document.getElementById('photoPlaceholder');
+  const overlay=document.getElementById('uploadOverlay');
+  const pe=document.getElementById('photoErr');
+
+  const reader=new FileReader();
+  reader.onload=e=>{prev.src=e.target.result;prev.style.display='block';ph.style.display='none'};
+  reader.readAsDataURL(file);
+  overlay.style.display='flex'; pe.style.display='none';
+
+  try {
+    const form=new FormData();
+    form.append('photo',file);
+    form.append('stepLabel',STEPS[i].label);
+    if (state.location) { form.append('latitude',state.location.lat); form.append('longitude',state.location.lng); }
+    const res=await fetch(`/api/inspections/${state.inspectionId}/step/${i+1}/photo`,{method:'POST',body:form});
+    const data=await res.json();
+    if (!res.ok) throw new Error(data.error);
+    state.photos[i]={path:data.path};
+    renderStep();
+  } catch(e) {
+    overlay.style.display='none';
+    prev.style.display='none'; ph.style.display='flex';
+    pe.textContent='Upload failed — please try again.'; pe.style.display='block';
+  }
+  this.value='';
+});
+
+function nextStep() {
+  if (!state.photos[state.step]) return;
+  if (state.step===STEPS.length-1) { showReview(); return; }
+  state.step++;
+  renderStep();
+  document.querySelector('.inspect-body').scrollTop=0;
+}
+function prevStep() {
+  if (state.step===0) { showScreen('screenHome'); return; }
+  state.step--;
+  renderStep();
+}
+function backToLastStep() { state.step=STEPS.length-1; renderStep(); showScreen('screenInspect'); }
+
+function showReview() {
+  const count=Object.keys(state.photos).length;
+  document.getElementById('reviewCount').textContent=count;
+  document.getElementById('reviewGrid').innerHTML=STEPS.map((s,i)=>{
+    const p=state.photos[i];
+    return `<div class="r-thumb">${p
+      ?`<img src="${p.path}" alt="${s.label}" loading="lazy"><div class="r-thumb-check"><svg viewBox="0 0 10 10" fill="none"><polyline points="2,5 4.5,7.5 8,2.5" stroke="#36c97e" stroke-width="1.5"/></svg></div>`
+      :`<div class="r-thumb-missing">Missing</div>`
+    }<div class="r-thumb-num">${i+1}</div></div>`;
+  }).join('');
+  document.getElementById('revDriver').textContent=state.user?.name||'—';
+  document.getElementById('revTruck').textContent=state.user?.truck_model||'—';
+  document.getElementById('revNum').textContent=state.user?.truck_number||'—';
+  document.getElementById('revTime').textContent=new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  if (state.location) {
+    const lt=state.location.lat.toFixed(5), lg=state.location.lng.toFixed(5);
+    document.getElementById('revLocation').innerHTML=`<a href="https://maps.google.com/?q=${lt},${lg}" target="_blank">${lt}, ${lg}</a>`;
+  } else {
+    document.getElementById('revLocation').textContent='Not available';
+  }
+  showScreen('screenReview');
+}
+
+async function submitInspection() {
+  const btn=document.getElementById('btnSubmit');
+  const txt=document.getElementById('submitTxt');
+  btn.disabled=true; txt.textContent='Submitting...';
+  try {
+    const body={notes:document.getElementById('notesInput').value};
+    if (state.location){body.latitude=state.location.lat;body.longitude=state.location.lng;}
+    const res=await fetch(`/api/inspections/${state.inspectionId}/submit`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if (!res.ok) throw new Error();
+    showScreen('screenSuccess');
+  } catch(e) { btn.disabled=false; txt.textContent='Submit Inspection'; alert('Submission failed. Check your connection.'); }
+}
+
+function newInspection() {
+  state={step:0,inspectionId:null,photos:{},location:state.location,user:state.user};
+  document.getElementById('notesInput').value='';
+  loadRecent();
+  showScreen('screenHome');
+}
+function showScreen(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
+function fmtDate(dt) { if(!dt) return 'N/A'; const d=new Date(dt.includes('T')?dt:dt+'Z'); return d.toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}); }
+async function logout() { await fetch('/api/logout',{method:'POST'}); window.location.href='/login'; }
+
+init();
+</script>
+</body>
+</html>

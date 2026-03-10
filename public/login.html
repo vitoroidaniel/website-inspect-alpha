@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>FleetInspect — Sign In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080a;
+  --surface:#0e1014;
+  --surface2:#151820;
+  --border:#1c2028;
+  --border2:#252c38;
+  --white:#eceae3;
+  --dim:#8a9090;
+  --muted:#3a4048;
+  --accent:#c8f135;
+  --accent2:#9bc41f;
+  --red:#f04e4e;
+  --green:#36c97e;
+  --blue:#4d9eff;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--white);font-family:'IBM Plex Mono',monospace;min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+
+/* grid bg */
+body::before{content:'';position:fixed;inset:0;
+  background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:52px 52px;opacity:.45;pointer-events:none;z-index:0}
+
+.header{position:relative;z-index:10;padding:20px 28px;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:12px;background:rgba(7,8,10,.96)}
+.logo-mark{width:30px;height:30px;background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-mark svg{width:16px;height:16px}
+.logo-text{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;letter-spacing:.5px;text-transform:uppercase}
+.logo-text em{color:var(--accent);font-style:normal}
+.version{margin-left:auto;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);border:1px solid var(--border2);padding:3px 9px}
+
+main{position:relative;z-index:1;flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px}
+.wrap{width:100%;max-width:460px}
+
+/* role switch */
+.role-switch{display:flex;gap:1px;background:var(--border2);margin-bottom:40px}
+.role-btn{flex:1;background:var(--surface);border:none;color:var(--dim);padding:14px 20px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.role-btn svg{width:14px;height:14px;opacity:.5;transition:opacity .2s}
+.role-btn.active{background:var(--surface2);color:var(--white)}
+.role-btn.active svg{opacity:1}
+.role-btn.active.driver-btn{border-bottom:2px solid var(--accent)}
+.role-btn.active.agent-btn{border-bottom:2px solid var(--blue)}
+
+/* eyebrow */
+.eyebrow{font-size:9px;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.eyebrow::before{content:'';display:block;width:16px;height:1px}
+.eyebrow.driver-eye{color:var(--accent)}
+.eyebrow.driver-eye::before{background:var(--accent)}
+.eyebrow.agent-eye{color:var(--blue)}
+.eyebrow.agent-eye::before{background:var(--blue)}
+.title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(42px,10vw,60px);font-weight:800;line-height:.95;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.title span{color:var(--accent)}
+.title.agent-title span{color:var(--blue)}
+.subtitle{font-size:11px;color:var(--dim);margin-bottom:32px;line-height:1.7}
+
+/* DRIVER PANEL */
+.driver-step{display:none}
+.driver-step.active{display:block}
+
+.driver-list{display:flex;flex-direction:column;gap:1px;background:var(--border2);max-height:240px;overflow-y:auto;margin-bottom:20px}
+.driver-option{background:var(--surface);padding:14px 16px;cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:12px}
+.driver-option:hover{background:var(--surface2)}
+.driver-option.selected{background:var(--surface2);border-left:2px solid var(--accent)}
+.driver-avatar{width:36px;height:36px;background:var(--muted);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--dim);flex-shrink:0}
+.driver-option.selected .driver-avatar{background:rgba(200,241,53,.12);color:var(--accent)}
+.driver-info{flex:1;min-width:0}
+.driver-opt-name{font-size:14px;color:var(--white);font-weight:500}
+.driver-opt-truck{font-size:11px;color:var(--dim);margin-top:2px}
+.driver-opt-num{font-size:10px;color:var(--accent);margin-top:1px}
+.driver-check{width:18px;height:18px;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.driver-option.selected .driver-check{background:var(--accent);border-color:var(--accent)}
+.driver-option.selected .driver-check svg{display:block}
+.driver-check svg{display:none;width:10px;height:10px}
+
+.btn-next-step{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--accent);color:var(--bg);border:none;padding:18px 22px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:opacity .2s}
+.btn-next-step:hover{opacity:.88}
+.btn-next-step:disabled{opacity:.4;cursor:not-allowed}
+
+/* PIN pad */
+.pin-header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.btn-back-pin{background:none;border:1px solid var(--border2);color:var(--dim);padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer}
+.btn-back-pin:hover{color:var(--white)}
+.selected-driver-display{flex:1}
+.selected-driver-display strong{font-size:14px;color:var(--white);display:block}
+.selected-driver-display span{font-size:11px;color:var(--dim)}
+
+.pin-dots{display:flex;gap:12px;justify-content:center;margin-bottom:28px}
+.pin-dot{width:14px;height:14px;border:1px solid var(--border2);border-radius:50%;transition:all .2s}
+.pin-dot.filled{background:var(--accent);border-color:var(--accent)}
+
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border2);margin-bottom:16px}
+.pin-key{background:var(--surface);border:none;color:var(--white);padding:22px 10px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:22px;cursor:pointer;transition:background .1s;text-align:center}
+.pin-key:hover{background:var(--surface2)}
+.pin-key:active{background:var(--border2)}
+.pin-key.del{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--dim)}
+.pin-key.del:hover{color:var(--white)}
+.pin-key.zero{grid-column:2}
+
+.btn-pin-submit{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--accent);color:var(--bg);border:none;padding:18px 22px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:opacity .2s}
+.btn-pin-submit:hover{opacity:.88}
+.btn-pin-submit:disabled{opacity:.4;cursor:not-allowed}
+
+/* AGENT PANEL */
+#agentPanel{display:none}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:7px}
+.form-input{display:block;width:100%;background:var(--surface);border:1px solid var(--border2);color:var(--white);padding:13px 16px;font-family:'IBM Plex Mono',monospace;font-size:13px;outline:none;transition:border-color .18s;-webkit-appearance:none;border-radius:0}
+.form-input:focus{border-color:var(--blue)}
+.form-input::placeholder{color:var(--muted)}
+.btn-agent-login{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--blue);color:var(--bg);border:none;padding:18px 22px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;margin-top:24px;transition:opacity .2s}
+.btn-agent-login:hover{opacity:.88}
+.btn-agent-login:disabled{opacity:.4;cursor:not-allowed}
+
+.error-msg{display:none;background:rgba(240,78,78,.07);border:1px solid rgba(240,78,78,.2);color:var(--red);font-size:11px;padding:11px 14px;margin-top:14px}
+
+footer{position:relative;z-index:1;padding:16px 28px;border-top:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;background:rgba(7,8,10,.96)}
+footer span{font-size:10px;color:var(--muted)}
+.sys-dot{display:inline-block;width:5px;height:5px;background:var(--green);border-radius:50%;margin-right:6px;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo-mark">
+    <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="5" width="14" height="2" fill="#07080a"/><rect x="1" y="9" width="14" height="2" fill="#07080a"/><rect x="3" y="1" width="10" height="2" fill="#07080a"/><circle cx="12" cy="13" r="2" fill="#07080a"/><circle cx="4" cy="13" r="2" fill="#07080a"/></svg>
+  </div>
+  <div class="logo-text">Fleet<em>Inspect</em></div>
+  <div class="version">v2.0</div>
+</header>
+
+<main>
+  <div class="wrap">
+    <!-- Role switch -->
+    <div class="role-switch">
+      <button class="role-btn driver-btn active" onclick="setRole('driver')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg>
+        Driver
+      </button>
+      <button class="role-btn agent-btn" onclick="setRole('agent')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        Dispatcher
+      </button>
+    </div>
+
+    <!-- DRIVER FLOW -->
+    <div id="driverPanel">
+      <!-- Step 1: pick driver -->
+      <div class="driver-step active" id="driverStep1">
+        <div class="eyebrow driver-eye">Driver Access</div>
+        <h1 class="title">Who<br>Are You<span>?</span></h1>
+        <p class="subtitle">Select your name from the list, then enter your 4-digit PIN.</p>
+        <div class="driver-list" id="driverList">
+          <div style="padding:20px;font-size:12px;color:var(--dim)">Loading drivers...</div>
+        </div>
+        <button class="btn-next-step" id="btnPickDriver" onclick="goToPin()" disabled>
+          <span>Enter PIN</span>
+          <span>&#8594;</span>
+        </button>
+      </div>
+
+      <!-- Step 2: PIN entry -->
+      <div class="driver-step" id="driverStep2">
+        <div class="pin-header">
+          <button class="btn-back-pin" onclick="backToList()">&#8592; Back</button>
+          <div class="selected-driver-display">
+            <strong id="selectedDriverName">Select Driver</strong>
+            <span id="selectedDriverTruck"></span>
+          </div>
+        </div>
+
+        <div class="eyebrow driver-eye">PIN Required</div>
+        <h1 class="title" style="margin-bottom:24px">Enter<br>PIN<span>.</span></h1>
+
+        <div class="pin-dots" id="pinDots">
+          <div class="pin-dot"></div>
+          <div class="pin-dot"></div>
+          <div class="pin-dot"></div>
+          <div class="pin-dot"></div>
+        </div>
+
+        <div class="pin-pad">
+          <button class="pin-key" onclick="pinKey('1')">1</button>
+          <button class="pin-key" onclick="pinKey('2')">2</button>
+          <button class="pin-key" onclick="pinKey('3')">3</button>
+          <button class="pin-key" onclick="pinKey('4')">4</button>
+          <button class="pin-key" onclick="pinKey('5')">5</button>
+          <button class="pin-key" onclick="pinKey('6')">6</button>
+          <button class="pin-key" onclick="pinKey('7')">7</button>
+          <button class="pin-key" onclick="pinKey('8')">8</button>
+          <button class="pin-key" onclick="pinKey('9')">9</button>
+          <button class="pin-key del" onclick="pinDel()">DEL</button>
+          <button class="pin-key zero" onclick="pinKey('0')">0</button>
+        </div>
+        <button class="btn-pin-submit" id="btnPinSubmit" onclick="submitPin()" disabled>
+          <span id="pinBtnText">Confirm PIN</span>
+          <span>&#8594;</span>
+        </button>
+        <div class="error-msg" id="pinError"></div>
+      </div>
+    </div>
+
+    <!-- AGENT PANEL -->
+    <div id="agentPanel">
+      <div class="eyebrow agent-eye">Dispatcher Access</div>
+      <h1 class="title agent-title">Sign<br>In<span style="color:var(--blue)">.</span></h1>
+      <p class="subtitle">Use your dispatcher or admin credentials.</p>
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input class="form-input" type="text" id="agentUsername" autocapitalize="none" spellcheck="false" placeholder="username" style="border-color:var(--border2);transition:border-color .18s" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border2)'">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" id="agentPassword" placeholder="password" style="border-color:var(--border2);transition:border-color .18s" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border2)'">
+      </div>
+      <button class="btn-agent-login" id="btnAgentLogin" onclick="agentLogin()">
+        <span id="agentBtnText">Access Dashboard</span>
+        <span>&#8594;</span>
+      </button>
+      <div class="error-msg" id="agentError"></div>
+      <div style="margin-top:24px;padding:14px 16px;background:var(--surface);border:1px solid var(--border2);font-size:11px;color:var(--dim);line-height:1.7">
+        Demo: <span style="color:var(--white)">dispatch / dispatch123</span><br>
+        Admin: <span style="color:var(--white)">admin / admin123</span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span><span class="sys-dot"></span>System online</span>
+  <span>FleetInspect &copy; 2025</span>
+</footer>
+
+<script>
+let selectedDriver = null;
+let pin = '';
+
+// ── ROLE SWITCH ──────────────────────────────────
+function setRole(role) {
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.${role}-btn`).classList.add('active');
+  document.getElementById('driverPanel').style.display = role === 'driver' ? 'block' : 'none';
+  document.getElementById('agentPanel').style.display  = role === 'agent'  ? 'block' : 'none';
+}
+
+// ── LOAD DRIVERS ─────────────────────────────────
+async function loadDrivers() {
+  try {
+    const res = await fetch('/api/drivers/list');
+    const drivers = await res.json();
+    const list = document.getElementById('driverList');
+    if (!drivers.length) { list.innerHTML = '<div style="padding:20px;font-size:12px;color:var(--dim)">No active drivers. Contact your dispatcher.</div>'; return; }
+    list.innerHTML = drivers.map(d => {
+      const initials = (d.full_name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      return `<div class="driver-option" data-id="${d.id}" onclick="selectDriver(${d.id},'${esc(d.full_name)}','${esc(d.truck_model||'')}','${esc(d.truck_number||'')}')">
+        <div class="driver-avatar">${initials}</div>
+        <div class="driver-info">
+          <div class="driver-opt-name">${esc(d.full_name)}</div>
+          <div class="driver-opt-truck">${esc(d.truck_model||'No truck assigned')}</div>
+          ${d.truck_number ? `<div class="driver-opt-num">${esc(d.truck_number)}</div>` : ''}
+        </div>
+        <div class="driver-check"><svg viewBox="0 0 10 10" fill="none"><polyline points="2,5 4.5,7.5 8,2.5" stroke="#07080a" stroke-width="1.5"/></svg></div>
+      </div>`;
+    }).join('');
+  } catch(e) { document.getElementById('driverList').innerHTML = '<div style="padding:20px;font-size:12px;color:var(--red)">Could not load drivers. Refresh page.</div>'; }
+}
+
+function selectDriver(id, name, truck, num) {
+  selectedDriver = { id, name, truck, num };
+  document.querySelectorAll('.driver-option').forEach(el => el.classList.toggle('selected', parseInt(el.dataset.id) === id));
+  document.getElementById('btnPickDriver').disabled = false;
+}
+
+function goToPin() {
+  if (!selectedDriver) return;
+  document.getElementById('selectedDriverName').textContent = selectedDriver.name;
+  document.getElementById('selectedDriverTruck').textContent = [selectedDriver.truck, selectedDriver.num].filter(Boolean).join(' — ') || 'No truck assigned';
+  pin = '';
+  renderPinDots();
+  document.getElementById('driverStep1').classList.remove('active');
+  document.getElementById('driverStep2').classList.add('active');
+  document.getElementById('pinError').style.display = 'none';
+}
+
+function backToList() {
+  pin = '';
+  renderPinDots();
+  document.getElementById('driverStep2').classList.remove('active');
+  document.getElementById('driverStep1').classList.add('active');
+}
+
+// ── PIN PAD ──────────────────────────────────────
+function pinKey(d) {
+  if (pin.length >= 4) return;
+  pin += d;
+  renderPinDots();
+  if (pin.length === 4) submitPin();
+}
+function pinDel() { pin = pin.slice(0,-1); renderPinDots(); }
+function renderPinDots() {
+  document.querySelectorAll('.pin-dot').forEach((dot, i) => dot.classList.toggle('filled', i < pin.length));
+  document.getElementById('btnPinSubmit').disabled = pin.length < 4;
+}
+
+async function submitPin() {
+  if (pin.length < 4 || !selectedDriver) return;
+  const btn = document.getElementById('btnPinSubmit');
+  const txt = document.getElementById('pinBtnText');
+  const err = document.getElementById('pinError');
+  btn.disabled = true;
+  txt.textContent = 'Verifying...';
+  err.style.display = 'none';
+  try {
+    const res = await fetch('/api/driver/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ driverId: selectedDriver.id, pin }) });
+    const data = await res.json();
+    if (!res.ok) { err.textContent = 'Incorrect PIN. Try again.'; err.style.display = 'block'; pin=''; renderPinDots(); txt.textContent='Confirm PIN'; btn.disabled=false; return; }
+    window.location.href = '/driver/inspect';
+  } catch(e) { err.textContent='Connection error.'; err.style.display='block'; txt.textContent='Confirm PIN'; btn.disabled=false; }
+}
+
+// ── AGENT LOGIN ──────────────────────────────────
+document.addEventListener('keydown', e => { if (document.getElementById('agentPanel').style.display !== 'none' && e.key === 'Enter') agentLogin(); });
+
+async function agentLogin() {
+  const username = document.getElementById('agentUsername').value.trim();
+  const password = document.getElementById('agentPassword').value;
+  const btn = document.getElementById('btnAgentLogin');
+  const txt = document.getElementById('agentBtnText');
+  const err = document.getElementById('agentError');
+  if (!username || !password) { err.textContent='Enter username and password.'; err.style.display='block'; return; }
+  btn.disabled=true; txt.textContent='Signing in...'; err.style.display='none';
+  try {
+    const res = await fetch('/api/login', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username, password}) });
+    const data = await res.json();
+    if (!res.ok) { err.textContent=data.error||'Invalid credentials.'; err.style.display='block'; txt.textContent='Access Dashboard'; btn.disabled=false; return; }
+    window.location.href = '/agent/dashboard';
+  } catch(e) { err.textContent='Connection error.'; err.style.display='block'; txt.textContent='Access Dashboard'; btn.disabled=false; }
+}
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+loadDrivers();
+</script>
+</body>
+</html>
