@@ -1,8 +1,14 @@
 const Database = require('better-sqlite3');
 const bcrypt = require('bcryptjs');
 const path = require('path');
+const fs = require('fs');
 
 const dbPath = process.env.DATABASE_PATH || path.join(__dirname, 'data.db');
+
+// Ensure the directory exists before opening (needed when Railway volume isn't mounted yet)
+const dbDir = path.dirname(dbPath);
+if (!fs.existsSync(dbDir)) fs.mkdirSync(dbDir, { recursive: true });
+
 const db = new Database(dbPath);
 
 db.exec(`
