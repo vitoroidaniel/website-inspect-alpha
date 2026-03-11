@@ -2,228 +2,236 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>FleetInspect — Sign In</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#f5f4f0;--surface:#ffffff;--surface2:#f0efe9;--surface3:#e8e6de;
-  --border:#e2e0d8;--border2:#d4d2c8;
-  --text:#1a1916;--dim:#7a7870;--muted:#b8b6ae;
-  --ink:#1a1916;
-  --teal:#0a9484;--teal2:#087a6d;--teal-light:rgba(10,148,132,.08);
-  --green:#16a34a;--red:#dc2626;
+  --bg:#f0f4ff;--surface:#fff;--surface2:#f7f8fc;
+  --border:#e4e8f0;--border2:#d0d6e8;
+  --text:#1a1d2e;--dim:#6b7280;--muted:#b0b8cc;
+  --brand:#4f6ef7;--brand2:#3a57e8;--brand-light:rgba(79,110,247,.1);
+  --green:#22c55e;--green-light:rgba(34,197,94,.1);
+  --red:#ef4444;--red-light:rgba(239,68,68,.1);
+  --radius:18px;--radius-sm:12px;
 }
-html,body{height:100%;font-family:'Inter',sans-serif}
-body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(79,110,247,.18) 0%,transparent 60%);pointer-events:none}
 
-.header{padding:20px 28px;display:flex;align-items:center;gap:11px;background:var(--ink)}
-.logo-mark{width:34px;height:34px;background:var(--teal);border-radius:9px;display:flex;align-items:center;justify-content:center}
-.logo-mark svg{width:19px;height:19px}
-.logo-text{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:#fff;letter-spacing:-.2px}
-.logo-text span{color:var(--teal)}
+/* HEADER */
+.hdr{padding:20px 28px;display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+.logo-wrap{display:flex;align-items:center;gap:12px}
+.logo-mark{width:42px;height:42px;background:var(--brand);border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(79,110,247,.35)}
+.logo-mark svg{width:22px;height:22px}
+.logo-text{font-size:22px;font-weight:900;color:var(--text);letter-spacing:-.5px}
+.logo-text span{color:var(--brand)}
 
-main{flex:1;display:flex;align-items:center;justify-content:center;padding:24px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:18px;width:100%;max-width:430px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.1)}
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:16px;position:relative;z-index:1}
 
-.role-tabs{display:flex;border-bottom:1px solid var(--border)}
-.rtab{flex:1;padding:14px;background:none;border:none;color:var(--dim);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .18s;position:relative}
-.rtab svg{width:14px;height:14px;flex-shrink:0}
-.rtab.active{color:var(--text);background:var(--surface2)}
-.rtab.active::after{content:'';position:absolute;bottom:0;left:16px;right:16px;height:2.5px;background:var(--teal);border-radius:2px 2px 0 0}
+.card{background:var(--surface);border-radius:28px;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.1),0 2px 8px rgba(0,0,0,.06);overflow:hidden}
 
-.card-body{padding:24px}
-.step{display:none}.step.active{display:block}
-.step-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.3px;margin-bottom:4px}
-.step-sub{font-size:13px;color:var(--dim);margin-bottom:20px;line-height:1.6}
+/* tabs */
+.tabs{display:flex;padding:16px 16px 0}
+.tab-btn{flex:1;padding:13px 10px;background:none;border:none;font-family:'Nunito',sans-serif;font-size:16px;font-weight:700;color:var(--dim);cursor:pointer;border-radius:var(--radius-sm) var(--radius-sm) 0 0;transition:all .18s;position:relative}
+.tab-btn.active{color:var(--brand);background:var(--brand-light)}
+.tab-btn.active::after{content:'';position:absolute;bottom:0;left:20%;right:20%;height:3px;background:var(--brand);border-radius:3px 3px 0 0}
 
-.driver-list{display:flex;flex-direction:column;gap:6px;max-height:244px;overflow-y:auto;margin-bottom:16px;padding-right:2px}
-.driver-list::-webkit-scrollbar{width:3px}
-.driver-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
-.driver-opt{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1.5px solid var(--border);border-radius:11px;cursor:pointer;transition:all .15s}
-.driver-opt:hover{border-color:var(--teal);background:var(--teal-light)}
-.driver-opt.sel{border-color:var(--teal);background:var(--teal-light)}
-.d-av{width:34px;height:34px;background:var(--surface3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--dim);flex-shrink:0}
-.driver-opt.sel .d-av{background:var(--teal);color:#fff}
-.d-info{flex:1;min-width:0}
-.d-name{font-size:14px;font-weight:600;color:var(--text)}
-.d-truck{font-size:11px;color:var(--dim);margin-top:1px}
-.d-check{width:18px;height:18px;border:1.5px solid var(--border2);border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.driver-opt.sel .d-check{background:var(--teal);border-color:var(--teal)}
-.driver-opt.sel .d-check svg{display:block}
-.d-check svg{display:none;width:9px;height:9px}
+.card-body{padding:28px}
+.panel{display:none}.panel.active{display:block}
 
-.btn-primary{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--ink);color:#fff;border:none;padding:14px 20px;border-radius:11px;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;cursor:pointer;transition:all .18s;letter-spacing:-.2px}
-.btn-primary:hover{background:var(--teal)}
-.btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.panel-title{font-size:26px;font-weight:900;color:var(--text);letter-spacing:-.5px;margin-bottom:6px}
+.panel-sub{font-size:16px;color:var(--dim);margin-bottom:26px;font-weight:500;line-height:1.5}
 
-/* PIN */
-.pin-back{display:flex;align-items:center;gap:8px;margin-bottom:18px}
-.btn-back{background:none;border:1.5px solid var(--border);border-radius:8px;color:var(--dim);padding:7px 13px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
-.btn-back:hover{border-color:var(--teal);color:var(--teal)}
-.sel-preview{flex:1;display:flex;align-items:center;gap:9px;background:var(--teal-light);border:1.5px solid rgba(10,148,132,.2);border-radius:8px;padding:7px 12px}
-.sel-av{width:26px;height:26px;background:var(--teal);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#fff;flex-shrink:0}
-.sel-name{font-size:13px;font-weight:600;color:var(--teal)}
+/* form */
+.field{margin-bottom:18px}
+.field label{display:block;font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px}
+.field input{display:block;width:100%;background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:14px 18px;font-family:'Nunito',sans-serif;font-size:17px;font-weight:600;outline:none;transition:all .18s}
+.field input:focus{border-color:var(--brand);background:#fff;box-shadow:0 0 0 4px rgba(79,110,247,.12)}
+.field input::placeholder{color:var(--muted)}
 
-.pin-dots{display:flex;gap:11px;justify-content:center;margin:16px 0 20px}
-.pdot{width:13px;height:13px;border:2px solid var(--border2);border-radius:50%;transition:all .18s}
-.pdot.on{background:var(--teal);border-color:var(--teal)}
+/* keep signed in */
+.keep-row{display:flex;align-items:center;gap:12px;margin-bottom:22px;cursor:pointer;user-select:none}
+.keep-box{width:24px;height:24px;border:2.5px solid var(--border2);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .18s}
+.keep-row input[type=checkbox]{display:none}
+.keep-row input:checked ~ .keep-box{background:var(--brand);border-color:var(--brand)}
+.keep-row input:checked ~ .keep-box svg{display:block}
+.keep-box svg{display:none;width:14px;height:14px}
+.keep-label{font-size:16px;font-weight:600;color:var(--dim)}
 
-.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.pkey{background:var(--surface2);border:1.5px solid var(--border);border-radius:11px;color:var(--text);padding:17px 10px;font-family:'Syne',sans-serif;font-size:22px;font-weight:800;cursor:pointer;transition:all .12s;text-align:center}
-.pkey:hover{border-color:var(--teal);background:var(--teal-light);color:var(--teal)}
-.pkey:active{transform:scale(.96)}
-.pkey.del{font-family:'Inter',sans-serif;font-size:13px;color:var(--dim);font-weight:600}
-.pkey.zero{grid-column:2}
+/* buttons */
+.btn-primary{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--brand);color:#fff;border:none;padding:17px 24px;border-radius:var(--radius);font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 4px 20px rgba(79,110,247,.35);transition:all .18s;letter-spacing:-.2px}
+.btn-primary:hover{background:var(--brand2);transform:translateY(-1px);box-shadow:0 6px 28px rgba(79,110,247,.45)}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn-primary svg{width:20px;height:20px}
 
-.form-group{margin-bottom:12px}
-.form-label{display:block;font-size:10px;font-weight:700;color:var(--dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
-.form-input{display:block;width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border-color .18s}
-.form-input:focus{border-color:var(--teal)}
-.form-input::placeholder{color:var(--muted)}
-.err-msg{display:none;background:rgba(220,38,38,.06);border:1.5px solid rgba(220,38,38,.2);color:var(--red);font-size:12px;font-weight:500;padding:10px 14px;border-radius:10px;margin-top:12px}
-.demo-hint{margin-top:14px;padding:11px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;font-size:12px;color:var(--dim);line-height:1.9}
-.demo-hint strong{color:var(--text)}
+.divider{display:flex;align-items:center;gap:14px;margin:20px 0}
+.divider-line{flex:1;height:1.5px;background:var(--border)}
+.divider span{font-size:14px;font-weight:700;color:var(--muted)}
 
-footer{padding:16px 28px;display:flex;justify-content:space-between;background:var(--ink)}
-footer span{font-size:11px;color:rgba(255,255,255,.3)}
-.online{display:inline-block;width:6px;height:6px;background:var(--green);border-radius:50%;margin-right:6px;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.btn-bio{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius);color:var(--text);padding:16px 24px;font-family:'Nunito',sans-serif;font-size:17px;font-weight:700;cursor:pointer;transition:all .18s}
+.btn-bio:hover{border-color:var(--brand);background:var(--brand-light);color:var(--brand)}
+.btn-bio svg{width:22px;height:22px;flex-shrink:0}
+.btn-bio .bio-label{display:flex;flex-direction:column;text-align:left}
+.btn-bio .bio-label span:first-child{font-size:17px;font-weight:700}
+.btn-bio .bio-label span:last-child{font-size:13px;font-weight:500;color:var(--dim)}
+
+.err-box{display:none;background:var(--red-light);border:2px solid rgba(239,68,68,.2);color:var(--red);font-size:15px;font-weight:600;padding:14px 16px;border-radius:var(--radius-sm);margin-top:16px;line-height:1.5}
+.succ-box{display:none;background:var(--green-light);border:2px solid rgba(34,197,94,.2);color:#16a34a;font-size:15px;font-weight:600;padding:14px 16px;border-radius:var(--radius-sm);margin-top:16px}
+
+.hint-box{margin-top:18px;padding:16px;background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-sm)}
+.hint-box p{font-size:14px;font-weight:600;color:var(--dim);line-height:2}
+.hint-box strong{color:var(--text)}
+
+footer{padding:18px 28px;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}
+footer span{font-size:14px;font-weight:600;color:var(--muted)}
+.status-dot{width:8px;height:8px;background:var(--green);border-radius:50%;display:inline-block;margin-right:7px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 </style>
 </head>
 <body>
-<header class="header">
-  <div class="logo-mark"><svg viewBox="0 0 20 20" fill="none"><rect x="2" y="7" width="16" height="3" rx="1.5" fill="white"/><rect x="2" y="11.5" width="16" height="3" rx="1.5" fill="white"/><rect x="4" y="2.5" width="12" height="3" rx="1.5" fill="white"/><circle cx="6" cy="17" r="2" fill="white"/><circle cx="14" cy="17" r="2" fill="white"/></svg></div>
-  <div class="logo-text">Fleet<span>Inspect</span></div>
+<header class="hdr">
+  <div class="logo-wrap">
+    <div class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="8" width="20" height="3.5" rx="1.75" fill="white"/><rect x="2" y="13" width="20" height="3.5" rx="1.75" fill="white"/><rect x="5" y="3" width="14" height="3.5" rx="1.75" fill="white"/><circle cx="7" cy="20.5" r="2.5" fill="white"/><circle cx="17" cy="20.5" r="2.5" fill="white"/></svg></div>
+    <div class="logo-text">Fleet<span>Inspect</span></div>
+  </div>
 </header>
 
 <main>
   <div class="card">
-    <div class="role-tabs">
-      <button class="rtab active" id="tabD" onclick="setRole('driver')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Driver
-      </button>
-      <button class="rtab" id="tabA" onclick="setRole('agent')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-        Dispatcher / Admin
-      </button>
+    <div class="tabs">
+      <button class="tab-btn active" id="tabDriver" onclick="setTab('driver')">🚛 Driver</button>
+      <button class="tab-btn" id="tabAgent" onclick="setTab('agent')">📋 Dispatcher / Admin</button>
     </div>
     <div class="card-body">
-      <!-- DRIVER -->
-      <div id="driverPanel">
-        <div class="step active" id="dS1">
-          <div class="step-title">Who are you?</div>
-          <div class="step-sub">Pick your name, then enter your PIN to start inspecting.</div>
-          <div class="driver-list" id="driverList"><div style="font-size:13px;color:var(--dim);padding:8px">Loading...</div></div>
-          <button class="btn-primary" id="btnGoPin" onclick="goToPin()" disabled>Continue to PIN &nbsp;›</button>
-        </div>
-        <div class="step" id="dS2">
-          <div class="pin-back">
-            <button class="btn-back" onclick="backToList()">‹ Back</button>
-            <div class="sel-preview">
-              <div class="sel-av" id="selAv">?</div>
-              <span class="sel-name" id="selName">—</span>
-            </div>
-          </div>
-          <div class="step-title">Enter PIN</div>
-          <div class="step-sub">Your 4-digit PIN from your dispatcher.</div>
-          <div class="pin-dots" id="pinDots">
-            <div class="pdot"></div><div class="pdot"></div><div class="pdot"></div><div class="pdot"></div>
-          </div>
-          <div class="pin-pad">
-            <button class="pkey" onclick="pk('1')">1</button><button class="pkey" onclick="pk('2')">2</button><button class="pkey" onclick="pk('3')">3</button>
-            <button class="pkey" onclick="pk('4')">4</button><button class="pkey" onclick="pk('5')">5</button><button class="pkey" onclick="pk('6')">6</button>
-            <button class="pkey" onclick="pk('7')">7</button><button class="pkey" onclick="pk('8')">8</button><button class="pkey" onclick="pk('9')">9</button>
-            <button class="pkey del" onclick="pdel()">⌫</button><button class="pkey zero" onclick="pk('0')">0</button>
-          </div>
-          <button class="btn-primary" id="btnPin" onclick="submitPin()" disabled><span id="pinTxt">Sign In</span> &nbsp;›</button>
-          <div class="err-msg" id="pinErr"></div>
+
+      <!-- DRIVER PANEL -->
+      <div class="panel active" id="panelDriver">
+        <div class="panel-title">Driver Login</div>
+        <div class="panel-sub">Sign in with your username and password to start your inspection.</div>
+        <div class="field"><label>Username or Email</label><input type="text" id="dUser" autocapitalize="none" autocomplete="username" placeholder="your username"></div>
+        <div class="field"><label>Password</label><input type="password" id="dPass" autocomplete="current-password" placeholder="your password"></div>
+        <label class="keep-row">
+          <input type="checkbox" id="dKeep">
+          <div class="keep-box"><svg viewBox="0 0 14 14" fill="none"><polyline points="2,7 5.5,10.5 12,3" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="keep-label">Keep me signed in for 30 days</span>
+        </label>
+        <button class="btn-primary" id="dLoginBtn" onclick="loginDriver()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          <span id="dLoginTxt">Sign In</span>
+        </button>
+        <div class="divider"><div class="divider-line"></div><span>or</span><div class="divider-line"></div></div>
+        <button class="btn-bio" id="dBioBtn" onclick="biometricLogin('driver')" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 12c0-2.21 1.79-4 4-4s4 1.79 4 4-1.79 4-4 4"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
+          <div class="bio-label"><span id="dBioLabel">Use Face ID / Fingerprint</span><span>Quick biometric sign in</span></div>
+        </button>
+        <div class="err-box" id="dErr"></div>
+      </div>
+
+      <!-- AGENT PANEL -->
+      <div class="panel" id="panelAgent">
+        <div class="panel-title">Welcome back</div>
+        <div class="panel-sub">Sign in with your dispatcher or admin credentials.</div>
+        <div class="field"><label>Username or Email</label><input type="text" id="aUser" autocapitalize="none" autocomplete="username" placeholder="your username"></div>
+        <div class="field"><label>Password</label><input type="password" id="aPass" autocomplete="current-password" placeholder="your password"></div>
+        <label class="keep-row">
+          <input type="checkbox" id="aKeep">
+          <div class="keep-box"><svg viewBox="0 0 14 14" fill="none"><polyline points="2,7 5.5,10.5 12,3" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="keep-label">Keep me signed in for 30 days</span>
+        </label>
+        <button class="btn-primary" id="aLoginBtn" onclick="loginAgent()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          <span id="aLoginTxt">Sign In</span>
+        </button>
+        <div class="divider"><div class="divider-line"></div><span>or</span><div class="divider-line"></div></div>
+        <button class="btn-bio" id="aBioBtn" onclick="biometricLogin('agent')" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 12c0-2.21 1.79-4 4-4s4 1.79 4 4-1.79 4-4 4"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
+          <div class="bio-label"><span id="aBioLabel">Use Face ID / Fingerprint</span><span>Quick biometric sign in</span></div>
+        </button>
+        <div class="err-box" id="aErr"></div>
+        <div class="hint-box">
+          <p>Dispatcher: <strong>dispatch / dispatch123</strong><br>Admin: <strong>admin / admin123</strong></p>
         </div>
       </div>
-      <!-- AGENT -->
-      <div id="agentPanel" style="display:none">
-        <div class="step-title">Welcome back</div>
-        <div class="step-sub">Sign in with your dispatcher credentials.</div>
-        <div class="form-group"><label class="form-label">Username</label><input class="form-input" type="text" id="agU" autocapitalize="none" placeholder="username"></div>
-        <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" id="agP" placeholder="password"></div>
-        <button class="btn-primary" id="btnAg" onclick="agentLogin()" style="margin-top:6px"><span id="agTxt">Sign In</span> &nbsp;›</button>
-        <div class="err-msg" id="agErr"></div>
-        <div class="demo-hint">Dispatcher: <strong>dispatch / dispatch123</strong><br>Admin: <strong>admin / admin123</strong></div>
-      </div>
+
     </div>
   </div>
 </main>
 
-<footer><span><span class="online"></span>System online</span><span>FleetInspect © 2025</span></footer>
+<footer>
+  <span><span class="status-dot"></span>System online</span>
+  <span>FleetInspect © 2025</span>
+</footer>
 
 <script>
-let sel=null,pin='';
-function setRole(r){
-  document.getElementById('tabD').classList.toggle('active',r==='driver');
-  document.getElementById('tabA').classList.toggle('active',r==='agent');
-  document.getElementById('driverPanel').style.display=r==='driver'?'block':'none';
-  document.getElementById('agentPanel').style.display=r==='agent'?'block':'none';
+function setTab(t){
+  document.getElementById('tabDriver').classList.toggle('active', t==='driver');
+  document.getElementById('tabAgent').classList.toggle('active', t==='agent');
+  document.getElementById('panelDriver').classList.toggle('active', t==='driver');
+  document.getElementById('panelAgent').classList.toggle('active', t==='agent');
 }
-async function loadDrivers(){
-  try{
-    const drivers=await(await fetch('/api/drivers/list')).json();
-    const el=document.getElementById('driverList');
-    if(!drivers.length){el.innerHTML='<div style="font-size:13px;color:var(--dim);padding:8px">No active drivers.</div>';return;}
-    el.innerHTML=drivers.map(d=>{
-      const i=(d.full_name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-      return`<div class="driver-opt" data-id="${d.id}" onclick="pickD(${d.id},'${esc(d.full_name)}','${esc(d.truck_model||'')}','${i}')">
-        <div class="d-av">${i}</div>
-        <div class="d-info"><div class="d-name">${esc(d.full_name)}</div><div class="d-truck">${esc(d.truck_model||'No truck')}${d.truck_number?' · '+esc(d.truck_number):''}</div></div>
-        <div class="d-check"><svg viewBox="0 0 10 10" fill="none"><polyline points="2,5 4.5,7.5 8,2.5" stroke="white" stroke-width="1.5"/></svg></div>
-      </div>`;
-    }).join('');
-  }catch(e){}
+
+// Enter key support
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  if (document.getElementById('panelDriver').classList.contains('active')) loginDriver();
+  else loginAgent();
+});
+
+async function doLogin(username, password, keepSignedIn, errEl, btnEl, txtEl) {
+  btnEl.disabled = true; txtEl.textContent = 'Signing in…'; errEl.style.display = 'none';
+  try {
+    const r = await fetch('/api/login', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username, password, keepSignedIn})});
+    const d = await r.json();
+    if (!r.ok) { showErr(errEl, d.error||'Invalid credentials'); btnEl.disabled=false; txtEl.textContent='Sign In'; return; }
+    window.location.href = d.role === 'driver' ? '/driver/inspect' : '/agent/dashboard';
+  } catch(e) { showErr(errEl, 'Connection error. Try again.'); btnEl.disabled=false; txtEl.textContent='Sign In'; }
 }
-function pickD(id,name,truck,init){
-  sel={id,name,truck,init};
-  document.querySelectorAll('.driver-opt').forEach(el=>el.classList.toggle('sel',parseInt(el.dataset.id)===id));
-  document.getElementById('btnGoPin').disabled=false;
+
+function loginDriver() { doLogin(document.getElementById('dUser').value.trim(), document.getElementById('dPass').value, document.getElementById('dKeep').checked, document.getElementById('dErr'), document.getElementById('dLoginBtn'), document.getElementById('dLoginTxt')); }
+function loginAgent()  { doLogin(document.getElementById('aUser').value.trim(), document.getElementById('aPass').value, document.getElementById('aKeep').checked, document.getElementById('aErr'), document.getElementById('aLoginBtn'), document.getElementById('aLoginTxt')); }
+
+// ── WEBAUTHN ──
+const bioSupported = window.PublicKeyCredential && typeof window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function';
+
+async function checkBiometricAvailable() {
+  if (!bioSupported) return;
+  try {
+    const ok = await window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+    if (!ok) return;
+    // Detect platform
+    const ua = navigator.userAgent;
+    const isIOS = /iPhone|iPad|iPod/.test(ua);
+    const isMac = /Mac/.test(ua) && !isIOS;
+    const label = isIOS || isMac ? '  Face ID / Touch ID' : '  Fingerprint / Face Unlock';
+    ['dBioLabel','aBioLabel'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=label; });
+    document.getElementById('dBioBtn').style.display = 'flex';
+    document.getElementById('aBioBtn').style.display = 'flex';
+  } catch(e) {}
 }
-function goToPin(){
-  if(!sel)return;
-  document.getElementById('selAv').textContent=sel.init;
-  document.getElementById('selName').textContent=sel.name;
-  pin='';renderDots();
-  document.getElementById('dS1').classList.remove('active');
-  document.getElementById('dS2').classList.add('active');
-  document.getElementById('pinErr').style.display='none';
+
+async function biometricLogin(panel) {
+  const errEl = document.getElementById(panel==='driver' ? 'dErr' : 'aErr');
+  errEl.style.display = 'none';
+  try {
+    const optRes = await fetch('/api/auth/webauthn/login-options', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username:''})});
+    const opts = await optRes.json();
+    opts.challenge = Uint8Array.from(opts.challenge, c=>c.charCodeAt(0));
+    if (opts.allowCredentials) opts.allowCredentials = opts.allowCredentials.map(c=>({...c, id: Uint8Array.from(atob(c.id), x=>x.charCodeAt(0))}));
+    const assertion = await navigator.credentials.get({ publicKey: opts });
+    const credId = btoa(String.fromCharCode(...new Uint8Array(assertion.rawId)));
+    const r = await fetch('/api/auth/webauthn/login', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({credentialId: credId})});
+    const d = await r.json();
+    if (!r.ok) { showErr(errEl, d.error||'Biometric login failed'); return; }
+    window.location.href = d.role === 'driver' ? '/driver/inspect' : '/agent/dashboard';
+  } catch(e) {
+    if (e.name !== 'NotAllowedError') showErr(errEl, 'Biometric login failed. Please use your password.');
+  }
 }
-function backToList(){pin='';document.getElementById('dS2').classList.remove('active');document.getElementById('dS1').classList.add('active');}
-function pk(d){if(pin.length>=4)return;pin+=d;renderDots();if(pin.length===4)submitPin();}
-function pdel(){pin=pin.slice(0,-1);renderDots();}
-function renderDots(){document.querySelectorAll('.pdot').forEach((d,i)=>d.classList.toggle('on',i<pin.length));document.getElementById('btnPin').disabled=pin.length<4;}
-async function submitPin(){
-  if(pin.length<4||!sel)return;
-  const btn=document.getElementById('btnPin'),txt=document.getElementById('pinTxt'),err=document.getElementById('pinErr');
-  btn.disabled=true;txt.textContent='Verifying...';err.style.display='none';
-  try{
-    const r=await fetch('/api/driver/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({driverId:sel.id,pin})});
-    if(!r.ok){err.textContent='Incorrect PIN. Try again.';err.style.display='block';pin='';renderDots();txt.textContent='Sign In';btn.disabled=false;return;}
-    window.location.href='/driver/inspect';
-  }catch(e){err.textContent='Connection error.';err.style.display='block';txt.textContent='Sign In';btn.disabled=false;}
-}
-document.addEventListener('keydown',e=>{if(document.getElementById('agentPanel').style.display!=='none'&&e.key==='Enter')agentLogin();});
-async function agentLogin(){
-  const u=document.getElementById('agU').value.trim(),p=document.getElementById('agP').value;
-  const btn=document.getElementById('btnAg'),txt=document.getElementById('agTxt'),err=document.getElementById('agErr');
-  if(!u||!p){err.textContent='Enter username and password.';err.style.display='block';return;}
-  btn.disabled=true;txt.textContent='Signing in...';err.style.display='none';
-  try{
-    const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
-    const d=await r.json();
-    if(!r.ok){err.textContent=d.error||'Invalid credentials.';err.style.display='block';txt.textContent='Sign In';btn.disabled=false;return;}
-    window.location.href='/agent/dashboard';
-  }catch(e){err.textContent='Connection error.';err.style.display='block';txt.textContent='Sign In';btn.disabled=false;}
-}
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
-loadDrivers();
+
+function showErr(el, msg) { el.textContent = msg; el.style.display = 'block'; }
+
+checkBiometricAvailable();
 </script>
 </body>
 </html>
