@@ -202,12 +202,12 @@ app.get('/api/agent/stats', requireAgent, (req, res) => {
 });
 
 // ── ADMIN API ────────────────────────────────────────────────────────────────
-app.get('/api/admin/users', requireAgent, (req, res) => {
+app.get('/api/admin/users', requireAdmin, (req, res) => {
   const users = db.prepare("SELECT id, username, full_name, role, truck_model, truck_number, driver_pin, active FROM users WHERE role!='superadmin' ORDER BY role, full_name").all();
   res.json(users);
 });
 
-app.post('/api/admin/users', requireAgent, (req, res) => {
+app.post('/api/admin/users', requireAdmin, (req, res) => {
   const { username, password, full_name, role, truck_model, truck_number, driver_pin } = req.body;
   if (!full_name || !role) return res.status(400).json({ error: 'Name and role required' });
   if (role === 'driver') {
@@ -229,7 +229,7 @@ app.post('/api/admin/users', requireAgent, (req, res) => {
   res.json({ ok: true });
 });
 
-app.patch('/api/admin/users/:id', requireAgent, (req, res) => {
+app.patch('/api/admin/users/:id', requireAdmin, (req, res) => {
   const { active, driver_pin, truck_model, truck_number, full_name } = req.body;
   const user = db.prepare('SELECT * FROM users WHERE id=?').get(req.params.id);
   if (!user) return res.status(404).json({ error: 'Not found' });
@@ -245,14 +245,14 @@ app.patch('/api/admin/users/:id', requireAgent, (req, res) => {
 app.get('/api/admin/steps', requireAgent, (req, res) => {
   res.json(db.prepare('SELECT * FROM inspection_steps ORDER BY step_number').all());
 });
-app.post('/api/admin/steps', requireAgent, (req, res) => {
+app.post('/api/admin/steps', requireAdmin, (req, res) => {
   const { label, instruction } = req.body;
   if (!label || !instruction) return res.status(400).json({ error: 'Label and instruction required' });
   const max = db.prepare('SELECT MAX(step_number) as m FROM inspection_steps').get().m || 0;
   db.prepare('INSERT INTO inspection_steps (step_number, label, instruction) VALUES (?,?,?)').run(max + 1, label, instruction);
   res.json({ ok: true });
 });
-app.patch('/api/admin/steps/:id', requireAgent, (req, res) => {
+app.patch('/api/admin/steps/:id', requireAdmin, (req, res) => {
   const { active, label, instruction } = req.body;
   if (active !== undefined) db.prepare('UPDATE inspection_steps SET active=? WHERE id=?').run(active ? 1 : 0, req.params.id);
   if (label)       db.prepare('UPDATE inspection_steps SET label=? WHERE id=?').run(label, req.params.id);

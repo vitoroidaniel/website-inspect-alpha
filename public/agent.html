@@ -3,348 +3,335 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FleetInspect — Dispatcher</title>
+<title>FleetInspect — Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#07080a;--surface:#0e1014;--surface2:#131720;--surface3:#1a1f2a;
-  --border:#1c2028;--border2:#252c38;
-  --white:#eceae3;--dim:#8a9090;--muted:#3a4048;
-  --accent:#c8f135;--accent2:#9bc41f;
-  --green:#36c97e;--red:#f04e4e;--orange:#e88a00;--blue:#4d9eff;
+  --bg:#0c0c14;--surface:#13131f;--surface2:#1a1a2e;--surface3:#22223a;
+  --border:#2a2a45;--border2:#353558;
+  --white:#f0eef8;--dim:#8888aa;--muted:#44445a;
+  --violet:#8b5cf6;--violet2:#7c3aed;
+  --violet-light:rgba(139,92,246,.08);--violet-glow:rgba(139,92,246,.2);
+  --green:#34d399;--green-light:rgba(52,211,153,.1);
+  --red:#f87171;--red-light:rgba(248,113,113,.1);
+  --orange:#fb923c;--orange-light:rgba(251,146,60,.1);
+  --blue:#60a5fa;--blue-light:rgba(96,165,250,.1);
 }
-html,body{height:100%}
-body{background:var(--bg);color:var(--white);font-family:'IBM Plex Mono',monospace;display:flex;flex-direction:column;min-height:100vh;-webkit-font-smoothing:antialiased}
+html,body{height:100%;font-family:'DM Sans',sans-serif}
+body{background:var(--bg);color:var(--white);display:flex;flex-direction:column;min-height:100vh;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 30% at 50% 0%,rgba(139,92,246,.08) 0%,transparent 60%);pointer-events:none;z-index:0}
 
 /* HEADER */
-.header{position:sticky;top:0;z-index:200;background:rgba(7,8,10,.97);border-bottom:1px solid var(--border2);padding:13px 22px;display:flex;align-items:center;gap:14px;backdrop-filter:blur(8px)}
-.logo-mark{width:26px;height:26px;background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.logo-mark svg{width:14px;height:14px}
-.logo-text{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;letter-spacing:.5px;text-transform:uppercase}
-.logo-text em{color:var(--accent);font-style:normal}
-.role-chip{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);border:1px solid rgba(200,241,53,.3);padding:3px 8px}
-.hdr-right{margin-left:auto;display:flex;align-items:center;gap:12px}
-.agent-badge{font-size:11px;color:var(--dim)}
-.btn-sm{background:none;border:1px solid var(--border2);color:var(--dim);padding:6px 11px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .15s}
-.btn-sm:hover{color:var(--white);border-color:var(--dim)}
+.hdr{position:sticky;top:0;z-index:200;background:rgba(12,12,20,.97);border-bottom:1px solid var(--border);padding:12px 22px;display:flex;align-items:center;gap:12px;backdrop-filter:blur(12px)}
+.logo{display:flex;align-items:center;gap:9px}
+.logo-icon{width:30px;height:30px;background:var(--violet);border-radius:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(139,92,246,.4)}
+.logo-icon svg{width:16px;height:16px}
+.logo-text{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:.3px}
+.logo-text em{color:var(--violet);font-style:normal}
+.role-chip{background:var(--violet-light);border:1px solid rgba(139,92,246,.25);color:var(--violet);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px}
+.hdr-r{margin-left:auto;display:flex;align-items:center;gap:10px}
+.agent-name{font-size:13px;font-weight:600;color:var(--dim)}
+.btn-sm{background:none;border:1.5px solid var(--border);border-radius:8px;color:var(--dim);padding:6px 12px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-sm:hover{border-color:var(--violet);color:var(--violet)}
 
-/* LAYOUT */
-.app{flex:1;display:flex;overflow:hidden;max-width:1440px;margin:0 auto;width:100%}
+.app{flex:1;display:flex;overflow:hidden;position:relative;z-index:1}
 
 /* SIDEBAR */
-.sidebar{width:68px;border-right:1px solid var(--border2);background:var(--surface);display:flex;flex-direction:column;align-items:center;padding:18px 0;gap:4px;flex-shrink:0}
-.nav-btn{width:44px;height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:7px;letter-spacing:.5px;text-transform:uppercase;transition:color .15s;padding:0}
+.sidebar{width:62px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:4px;flex-shrink:0}
+.nav-btn{width:44px;height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:8px;font-weight:600;border-radius:10px;transition:all .15s;padding:0;text-transform:uppercase;letter-spacing:.3px}
 .nav-btn svg{width:17px;height:17px}
-.nav-btn:hover{color:var(--dim)}
-.nav-btn.active{color:var(--accent)}
-.nav-divider{width:22px;height:1px;background:var(--border2);margin:4px 0}
+.nav-btn:hover{color:var(--dim);background:var(--surface2)}
+.nav-btn.active{color:var(--violet);background:var(--violet-light)}
+.nav-sep{width:24px;height:1px;background:var(--border);margin:4px 0}
 
-/* PANEL */
 .panel-area{flex:1;display:flex;overflow:hidden}
 .tab{display:none;flex:1;flex-direction:column;overflow:hidden}
 .tab.active{display:flex}
 
-/* STATS BAR */
-.stats-bar{border-bottom:1px solid var(--border2);background:var(--border2);display:flex;gap:1px;flex-shrink:0}
-.stat-cell{flex:1;background:var(--surface);padding:11px 16px;text-align:center}
-.stat-num{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;letter-spacing:.5px;color:var(--white)}
-.stat-num em{color:var(--accent);font-style:normal}
-.stat-lbl{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-top:2px}
+/* STATS */
+.stats-bar{display:flex;gap:1px;background:var(--border);flex-shrink:0}
+.stat-box{flex:1;background:var(--surface);padding:13px 14px;text-align:center}
+.stat-num{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;letter-spacing:.5px;color:var(--white)}
+.stat-num.v{color:var(--violet)}
+.stat-lbl{font-size:9px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
 
-/* ── OVERVIEW TAB ─────────────────────────────────────── */
-.overview-layout{flex:1;display:flex;overflow:hidden}
-
-/* drivers panel */
-.drivers-col{width:290px;border-right:1px solid var(--border2);display:flex;flex-direction:column;flex-shrink:0}
-.col-head{padding:14px 18px;border-bottom:1px solid var(--border2);background:var(--surface);flex-shrink:0}
-.col-head-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:5px}
-.col-head-count{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;letter-spacing:.5px}
-.col-head-count em{color:var(--accent);font-style:normal}
-.search-box{display:block;width:calc(100% - 28px);margin:10px 14px 0;background:var(--surface2);border:1px solid var(--border2);color:var(--white);padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;outline:none;transition:border-color .18s}
-.search-box:focus{border-color:var(--accent)}
+/* ── OVERVIEW ── */
+.ov-wrap{flex:1;display:flex;overflow:hidden}
+.drivers-col{width:272px;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;background:var(--surface)}
+.col-hd{padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.col-hd-sub{font-size:9px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
+.col-hd-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;letter-spacing:.3px}
+.col-hd-title em{color:var(--violet);font-style:normal}
+.search-box{display:block;width:calc(100% - 20px);margin:10px 10px 0;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;color:var(--white);padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:12px;outline:none;transition:border-color .18s}
+.search-box:focus{border-color:var(--violet)}
 .search-box::placeholder{color:var(--muted)}
-.drivers-list{flex:1;overflow-y:auto}
-.driver-row{padding:12px 18px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;display:flex;align-items:flex-start;gap:10px}
+.drivers-list{flex:1;overflow-y:auto;padding:8px}
+.driver-row{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:10px;cursor:pointer;transition:all .12s;margin-bottom:2px}
 .driver-row:hover{background:var(--surface2)}
-.driver-row.active{background:var(--surface2);border-left:2px solid var(--accent)}
-.dr-avatar{width:32px;height:32px;background:var(--surface3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--dim);flex-shrink:0}
-.driver-row.active .dr-avatar{color:var(--accent);border-color:rgba(200,241,53,.3)}
-.dr-meta{flex:1;min-width:0}
-.dr-name{font-size:13px;color:var(--white);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dr-truck{font-size:10px;color:var(--dim);margin-top:1px}
-.dr-last{font-size:9px;color:var(--muted);margin-top:2px}
-.dr-count{flex-shrink:0;font-size:11px;color:var(--dim);background:var(--surface3);border:1px solid var(--border2);padding:2px 7px;margin-top:2px}
-.dr-inactive{opacity:.45}
+.driver-row.active{background:var(--violet-light);border:1px solid rgba(139,92,246,.2)}
+.dr-av{width:34px;height:34px;background:var(--surface3);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--dim);flex-shrink:0}
+.driver-row.active .dr-av{background:var(--violet);color:#fff}
+.dr-info{flex:1;min-width:0}
+.dr-name{font-size:13px;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.driver-row.active .dr-name{color:var(--violet)}
+.dr-truck{font-size:11px;color:var(--dim);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dr-last{font-size:10px;color:var(--muted);margin-top:1px}
+.dr-cnt{font-size:11px;font-weight:700;color:var(--dim);background:var(--surface3);border-radius:20px;padding:2px 7px;flex-shrink:0}
+.driver-row.active .dr-cnt{background:rgba(139,92,246,.2);color:var(--violet)}
 
-/* detail panel */
+/* DETAIL */
 .detail-col{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.detail-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted)}
-.detail-empty svg{width:36px;height:36px;opacity:.25}
-.detail-empty p{font-size:11px;color:var(--dim)}
+.detail-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.empty-icon{width:54px;height:54px;background:var(--surface);border:1px solid var(--border);border-radius:14px;display:flex;align-items:center;justify-content:center}
+.empty-icon svg{width:24px;height:24px;color:var(--muted)}
+.empty-icon ~ p{font-size:13px;color:var(--dim);font-weight:500}
 .detail-content{display:none;flex:1;flex-direction:column;overflow:hidden}
-.detail-head{padding:14px 22px;border-bottom:1px solid var(--border2);background:var(--surface);flex-shrink:0}
-.detail-name{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px}
-.detail-sub{font-size:10px;color:var(--dim)}
-.detail-sub span{color:var(--dim);margin-right:12px}
-.inspections-area{flex:1;overflow-y:auto;padding:14px 22px}
+.detail-hd{padding:15px 20px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.detail-name{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px}
+.detail-sub{font-size:11px;color:var(--dim);font-weight:500}
+.detail-sub span{margin-right:10px}
+.insp-list{flex:1;overflow-y:auto;padding:14px 20px}
 
 /* inspection cards */
-.insp-card{border:1px solid var(--border2);margin-bottom:12px;background:var(--surface)}
-.insp-card-head{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background .12s}
-.insp-card-head:hover{background:var(--surface2)}
-.insp-card-date{font-size:12px;color:var(--white);font-weight:500}
-.insp-card-sub{font-size:10px;color:var(--dim);margin-top:2px}
-.insp-card-right{display:flex;align-items:center;gap:8px}
-.chip{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 6px;border:1px solid}
-.chip.ok{color:var(--green);border-color:rgba(54,201,126,.25)}
-.chevron{color:var(--dim);font-size:14px;transition:transform .2s}
-.chevron.open{transform:rotate(180deg)}
-.insp-card-body{display:none;padding:14px;border-top:1px solid var(--border)}
+.insp-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden}
+.insp-card-hd{padding:13px 15px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background .12s;border-radius:14px}
+.insp-card-hd:hover{background:var(--surface2)}
+.insp-card-date{font-size:13px;font-weight:600;color:var(--white)}
+.insp-card-sub{font-size:11px;color:var(--dim);margin-top:2px}
+.insp-card-r{display:flex;align-items:center;gap:8px}
+.pill-sm{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px}
+.pill-sm.ok{background:var(--green-light);color:var(--green)}
+.chev{color:var(--dim);font-size:15px;transition:transform .2s}
+.chev.open{transform:rotate(180deg)}
+.insp-card-body{display:none;padding:15px;border-top:1px solid var(--border)}
 .insp-card-body.open{display:block}
 
-/* photo grid in card */
-.photo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-bottom:12px}
-@media(max-width:900px){.photo-grid{grid-template-columns:repeat(3,1fr)}}
-.photo-cell{position:relative;aspect-ratio:4/3;background:var(--surface2);overflow:hidden;cursor:pointer}
+/* photo grid */
+.photo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:12px}
+.photo-cell{position:relative;aspect-ratio:4/3;background:var(--surface2);border-radius:8px;overflow:hidden;cursor:pointer;border:1px solid var(--border)}
 .photo-cell img{width:100%;height:100%;object-fit:cover;transition:transform .2s}
-.photo-cell:hover img{transform:scale(1.05)}
-.photo-cell-lbl{position:absolute;bottom:0;left:0;right:0;padding:2px 5px;background:rgba(0,0,0,.6);font-size:8px;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.8px}
-.photo-cell-num{position:absolute;top:3px;right:4px;font-size:8px;color:rgba(255,255,255,.45);background:rgba(0,0,0,.5);padding:1px 3px}
+.photo-cell:hover img{transform:scale(1.07)}
+.photo-cell-lbl{position:absolute;bottom:0;left:0;right:0;padding:3px 5px;background:linear-gradient(transparent,rgba(0,0,0,.6));font-size:8px;color:rgba(255,255,255,.85);font-weight:600}
+.photo-cell-num{position:absolute;top:3px;right:3px;font-size:8px;font-weight:700;background:rgba(0,0,0,.5);color:#fff;padding:1px 4px;border-radius:3px}
 
 /* detail rows */
-.drows{display:flex;flex-direction:column;gap:1px;background:var(--border);margin-bottom:12px}
-.drow{background:var(--surface2);display:flex;justify-content:space-between;align-items:center;padding:8px 12px;gap:10px}
-.drow .k{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim)}
-.drow .v{font-size:11px;color:var(--white);text-align:right}
-.drow .v a{color:var(--accent);text-decoration:none}
+.drows{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.drow{display:flex;justify-content:space-between;align-items:center;padding:9px 13px;border-bottom:1px solid var(--border);gap:10px}
+.drow:last-child{border-bottom:none}
+.drow .k{font-size:10px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.3px}
+.drow .v{font-size:12px;font-weight:600;color:var(--white);text-align:right}
+.drow .v a{color:var(--violet);text-decoration:none}
 .drow .v a:hover{text-decoration:underline}
-.notes-block{background:var(--surface2);border:1px solid var(--border2);padding:9px 12px;font-size:11px;color:var(--dim);line-height:1.6;margin-bottom:12px}
-.card-btns{display:flex;gap:7px}
-.btn-dl{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;background:var(--accent);color:var(--bg);border:none;padding:11px 14px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:opacity .2s}
-.btn-dl:hover{opacity:.85}
-.btn-outline{display:flex;align-items:center;justify-content:center;gap:6px;background:none;border:1px solid var(--border2);color:var(--dim);padding:11px 14px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:color .15s,border-color .15s}
-.btn-outline:hover{color:var(--white);border-color:var(--dim)}
+.notes-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 13px;font-size:12px;color:var(--dim);line-height:1.6;margin-bottom:10px}
+.card-actions{display:flex;gap:7px}
+.btn-dl{display:inline-flex;align-items:center;gap:7px;background:var(--violet);color:#fff;border:none;padding:10px 16px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s;box-shadow:0 2px 12px rgba(139,92,246,.3)}
+.btn-dl:hover{background:var(--violet2)}
+.btn-dl svg{width:12px;height:12px}
 
-/* ── FEED TAB ─────────────────────────────────────── */
+/* ── FEED ── */
 .feed-wrap{flex:1;overflow-y:auto;padding:22px}
-.tab-title{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px}
-.tab-sub{font-size:10px;color:var(--dim);margin-bottom:22px}
-.feed-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
-.feed-timeline{display:flex;flex-direction:column;align-items:center;padding-top:3px}
-.feed-dot{width:8px;height:8px;background:var(--accent);flex-shrink:0}
-.feed-line{width:1px;flex:1;background:var(--border2);margin-top:5px}
+.page-title{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px}
+.page-sub{font-size:12px;color:var(--dim);margin-bottom:20px;font-weight:500}
+.feed-item{display:flex;gap:12px;padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid var(--border)}
+.feed-icon{width:34px;height:34px;background:var(--violet-light);border:1px solid rgba(139,92,246,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.feed-icon svg{width:15px;height:15px;color:var(--violet)}
 .feed-body{flex:1;min-width:0}
-.feed-driver{font-size:13px;color:var(--white);font-weight:500;margin-bottom:2px}
-.feed-truck{font-size:10px;color:var(--dim);margin-bottom:5px}
-.feed-time{font-size:9px;color:var(--muted);margin-bottom:8px}
-.feed-action{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:var(--bg);padding:7px 12px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;margin-top:6px;transition:opacity .2s}
-.feed-action:hover{opacity:.85}
-.feed-loc{font-size:10px;margin-top:6px}
-.feed-loc a{color:var(--accent);text-decoration:none}
-.feed-loc a:hover{text-decoration:underline}
-.feed-empty{font-size:12px;color:var(--dim);padding:30px 0}
+.feed-driver{font-size:14px;font-weight:600;color:var(--white);margin-bottom:2px}
+.feed-truck{font-size:11px;color:var(--dim);margin-bottom:4px}
+.feed-time{font-size:11px;color:var(--muted)}
+.feed-loc{font-size:11px;margin-top:5px}
+.feed-loc a{color:var(--violet);text-decoration:none;font-weight:600}
+.feed-dl{display:inline-flex;align-items:center;gap:5px;background:var(--violet);color:#fff;padding:7px 12px;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;text-decoration:none;margin-top:8px;transition:background .15s}
+.feed-dl:hover{background:var(--violet2)}
+.feed-empty{font-size:13px;color:var(--dim);padding:20px 0}
 
-/* ── MANAGE TAB ───────────────────────────────────── */
+/* ── MANAGE ── */
 .manage-wrap{flex:1;overflow-y:auto;padding:22px;max-width:860px}
-.manage-section{margin-bottom:36px}
-.manage-section-head{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:12px;padding-bottom:9px;border-bottom:1px solid var(--border2)}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-.form-group{display:flex;flex-direction:column;gap:5px}
-.form-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim)}
-.form-input{background:var(--surface);border:1px solid var(--border2);color:var(--white);padding:10px 13px;font-family:'IBM Plex Mono',monospace;font-size:12px;outline:none;transition:border-color .18s;-webkit-appearance:none;border-radius:0}
-.form-input:focus{border-color:var(--accent)}
-.form-input::placeholder{color:var(--muted)}
-.form-select{background:var(--surface);border:1px solid var(--border2);color:var(--white);padding:10px 13px;font-family:'IBM Plex Mono',monospace;font-size:12px;outline:none;-webkit-appearance:none;border-radius:0;cursor:pointer}
-.role-fields{margin-top:10px;padding:12px;background:var(--surface2);border:1px solid var(--border);font-size:11px;color:var(--dim);line-height:1.7}
-.btn-create{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--accent);color:var(--bg);border:none;padding:14px 18px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;margin-top:14px;transition:opacity .2s}
-.btn-create:hover{opacity:.88}
-.alert-box{display:none;font-size:11px;padding:9px 12px;border:1px solid;margin-top:10px}
+.manage-section{margin-bottom:30px}
+.manage-sec-hd{font-size:10px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;padding-bottom:9px;border-bottom:1px solid var(--border)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px}
+.fg{display:flex;flex-direction:column;gap:5px}
+.flbl{font-size:10px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+.finput{background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;color:var(--white);padding:10px 13px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color .18s}
+.finput:focus{border-color:var(--violet)}
+.finput::placeholder{color:var(--muted)}
+.fselect{background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;color:var(--white);padding:10px 13px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;cursor:pointer;-webkit-appearance:none}
+.role-hint{background:var(--violet-light);border:1px solid rgba(139,92,246,.2);border-radius:10px;padding:10px 13px;font-size:12px;color:var(--dim);line-height:1.7;margin-top:8px}
+.btn-create{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--violet);color:#fff;border:none;padding:13px 17px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;margin-top:12px;box-shadow:0 4px 20px rgba(139,92,246,.3);transition:all .18s}
+.btn-create:hover{background:var(--violet2)}
+.alert-box{display:none;font-size:12px;font-weight:600;padding:10px 13px;border-radius:10px;margin-top:9px;border:1.5px solid}
 
 /* users table */
-.utbl{border:1px solid var(--border2);overflow:hidden}
-.utbl-head{display:grid;grid-template-columns:1.5fr 1fr 80px 1fr 80px 70px;background:var(--surface2);border-bottom:1px solid var(--border2);padding:8px 14px;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
-.utbl-row{display:grid;grid-template-columns:1.5fr 1fr 80px 1fr 80px 70px;padding:10px 14px;border-bottom:1px solid var(--border);font-size:11px;align-items:center}
+.utbl{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.utbl-hd{display:grid;grid-template-columns:1.4fr 1fr 80px 1fr 60px 80px;background:var(--surface2);border-bottom:1px solid var(--border);padding:9px 15px;font-size:9px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;gap:8px}
+.utbl-row{display:grid;grid-template-columns:1.4fr 1fr 80px 1fr 60px 80px;padding:11px 15px;border-bottom:1px solid var(--border);font-size:12px;align-items:center;gap:8px;transition:background .12s}
 .utbl-row:last-child{border-bottom:none}
-.role-tag{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;padding:2px 6px;border:1px solid;display:inline-block}
-.role-tag.driver{color:var(--orange);border-color:rgba(232,138,0,.3)}
-.role-tag.agent{color:var(--blue);border-color:rgba(77,158,255,.3)}
-.pin-badge{font-size:10px;color:var(--accent);font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px}
-.toggle-btn{font-size:9px;padding:3px 8px;background:none;border:1px solid var(--border2);color:var(--dim);cursor:pointer;letter-spacing:1px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;transition:all .15s}
-.toggle-btn.deactivate:hover{color:var(--red);border-color:rgba(240,78,78,.4)}
-.toggle-btn.activate{color:var(--green);border-color:rgba(54,201,126,.3)}
+.utbl-row:hover{background:var(--surface2)}
+.rpill{font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;display:inline-block}
+.rpill.driver{background:var(--orange-light);color:var(--orange)}
+.rpill.agent{background:var(--blue-light);color:var(--blue)}
+.pin-show{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--violet);letter-spacing:1px}
+.tbtn{font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .15s}
+.tbtn.dis{background:var(--red-light);color:var(--red)}
+.tbtn.dis:hover{background:rgba(248,113,113,.18)}
+.tbtn.en{background:var(--green-light);color:var(--green)}
+.tbtn.en:hover{background:rgba(52,211,153,.18)}
 
-/* steps table */
-.stbl{border:1px solid var(--border2);overflow:hidden}
-.stbl-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border);font-size:11px}
+/* steps */
+.stbl{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.stbl-row{display:flex;align-items:center;gap:11px;padding:11px 15px;border-bottom:1px solid var(--border)}
 .stbl-row:last-child{border-bottom:none}
-.step-num{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--dim);width:24px;text-align:center;flex-shrink:0}
-.step-label-text{font-weight:500;color:var(--white);min-width:120px}
-.step-instr{color:var(--dim);font-size:10px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.step-toggle{font-size:9px;padding:3px 8px;background:none;border:1px solid var(--border2);color:var(--dim);cursor:pointer;letter-spacing:1px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;flex-shrink:0}
-.step-toggle.off{color:var(--red);border-color:rgba(240,78,78,.3)}
-.step-toggle.on{color:var(--green);border-color:rgba(54,201,126,.3)}
 .stbl-row.inactive{opacity:.4}
-.btn-add-step{display:flex;align-items:center;gap:8px;background:none;border:1px solid var(--border2);color:var(--dim);padding:10px 14px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;margin-top:10px;transition:color .15s,border-color .15s;width:100%;justify-content:center}
-.btn-add-step:hover{color:var(--white);border-color:var(--dim)}
-.add-step-form{display:none;margin-top:10px;background:var(--surface2);border:1px solid var(--border2);padding:14px}
+.snbadge{width:28px;height:28px;background:var(--violet-light);border:1px solid rgba(139,92,246,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--violet);flex-shrink:0}
+.sinfo{flex:1;min-width:0}
+.sinfo-lbl{font-size:13px;font-weight:600;color:var(--white)}
+.sinfo-inst{font-size:11px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.stbtn{font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;flex-shrink:0}
+.stbtn.on{background:var(--red-light);color:var(--red)}
+.stbtn.off{background:var(--green-light);color:var(--green)}
+.btn-add-step{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;background:none;border:1.5px dashed var(--border2);border-radius:12px;color:var(--dim);padding:11px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;margin-top:8px;transition:all .15s}
+.btn-add-step:hover{border-color:var(--violet);color:var(--violet)}
+.add-step-form{display:none;margin-top:8px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px}
 
 /* LIGHTBOX */
-.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:1000;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1000;flex-direction:column;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)}
 .lightbox.open{display:flex}
-.lb-img{max-width:100%;max-height:72vh;object-fit:contain}
-.lb-meta{font-size:10px;color:var(--dim);margin-top:14px;text-align:center;line-height:1.7}
-.lb-close{position:absolute;top:18px;right:18px;background:none;border:1px solid var(--border2);color:var(--white);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;padding:7px 13px;cursor:pointer}
-.lb-nav{display:flex;gap:7px;margin-top:14px}
-.lb-nav button{background:none;border:1px solid var(--border2);color:var(--dim);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;padding:7px 14px;cursor:pointer;transition:color .15s}
-.lb-nav button:hover{color:var(--white)}
+.lb-img{max-width:100%;max-height:72vh;object-fit:contain;border-radius:12px}
+.lb-meta{font-size:11px;color:rgba(255,255,255,.5);margin-top:12px;text-align:center;font-weight:500}
+.lb-close{position:absolute;top:18px;right:18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;padding:8px 14px;cursor:pointer;transition:background .15s}
+.lb-close:hover{background:rgba(255,255,255,.15)}
+.lb-nav{display:flex;gap:7px;margin-top:12px}
+.lb-nav button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;padding:8px 16px;cursor:pointer;transition:background .15s}
+.lb-nav button:hover{background:rgba(255,255,255,.15)}
 
 ::-webkit-scrollbar{width:3px;height:3px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--border2)}
-
-@media(max-width:720px){
-  .drivers-col{width:240px}
-  .sidebar{display:none}
-}
-@media(max-width:560px){
-  .overview-layout{flex-direction:column}
-  .drivers-col{width:100%;max-height:35vh;border-right:none;border-bottom:1px solid var(--border2)}
-}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+@media(max-width:720px){.drivers-col{width:240px}.sidebar{display:none}}
+@media(max-width:560px){.ov-wrap{flex-direction:column}.drivers-col{width:100%;max-height:36vh;border-right:none;border-bottom:1px solid var(--border)}}
 </style>
 </head>
 <body>
-
-<header class="header">
-  <div class="logo-mark"><svg viewBox="0 0 16 16" fill="none"><rect x="1" y="5" width="14" height="2" fill="#07080a"/><rect x="1" y="9" width="14" height="2" fill="#07080a"/><rect x="3" y="1" width="10" height="2" fill="#07080a"/><circle cx="12" cy="13" r="2" fill="#07080a"/><circle cx="4" cy="13" r="2" fill="#07080a"/></svg></div>
-  <div class="logo-text">Fleet<em>Inspect</em></div>
-  <div class="role-chip">Dispatcher</div>
-  <div class="hdr-right">
-    <span class="agent-badge" id="agentName">Loading...</span>
+<header class="hdr">
+  <div class="logo">
+    <div class="logo-icon"><svg viewBox="0 0 18 18" fill="none"><rect x="1" y="6" width="16" height="2.5" rx="1.25" fill="white"/><rect x="1" y="10" width="16" height="2.5" rx="1.25" fill="white"/><rect x="3.5" y="2" width="11" height="2.5" rx="1.25" fill="white"/><circle cx="13.5" cy="15" r="1.8" fill="white"/><circle cx="4.5" cy="15" r="1.8" fill="white"/></svg></div>
+    <div class="logo-text">Fleet<em>Inspect</em></div>
+  </div>
+  <div class="role-chip" id="roleBadge">Dispatcher</div>
+  <div class="hdr-r">
+    <span class="agent-name" id="agentName">Loading...</span>
     <button class="btn-sm" onclick="logout()">Sign Out</button>
   </div>
 </header>
-
 <div class="app">
-  <!-- SIDEBAR -->
   <nav class="sidebar">
     <button class="nav-btn active" id="navOverview" onclick="showTab('Overview')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       Fleet
     </button>
-    <div class="nav-divider"></div>
+    <div class="nav-sep"></div>
     <button class="nav-btn" id="navFeed" onclick="showTab('Feed')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       Feed
     </button>
-    <div class="nav-divider"></div>
-    <button class="nav-btn" id="navManage" onclick="showTab('Manage')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M12 8v4l2 2"/></svg>
-      Manage
+    <div class="nav-sep" id="manSep" style="display:none"></div>
+    <button class="nav-btn" id="navManage" onclick="showTab('Manage')" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+      Admin
     </button>
   </nav>
-
   <div class="panel-area">
 
-    <!-- OVERVIEW TAB -->
+    <!-- OVERVIEW -->
     <div class="tab active" id="tabOverview">
       <div class="stats-bar">
-        <div class="stat-cell"><div class="stat-num" id="sDrivers">—</div><div class="stat-lbl">Drivers</div></div>
-        <div class="stat-cell"><div class="stat-num" id="sTotal">—</div><div class="stat-lbl">Inspections</div></div>
-        <div class="stat-cell"><div class="stat-num"><em id="sToday">—</em></div><div class="stat-lbl">Today</div></div>
-        <div class="stat-cell"><div class="stat-num" id="sPhotos">—</div><div class="stat-lbl">Photos</div></div>
+        <div class="stat-box"><div class="stat-num" id="sD">—</div><div class="stat-lbl">Drivers</div></div>
+        <div class="stat-box"><div class="stat-num" id="sT">—</div><div class="stat-lbl">Inspections</div></div>
+        <div class="stat-box"><div class="stat-num v" id="sTd">—</div><div class="stat-lbl">Today</div></div>
+        <div class="stat-box"><div class="stat-num" id="sP">—</div><div class="stat-lbl">Photos</div></div>
       </div>
-      <div class="overview-layout">
-        <!-- DRIVERS -->
+      <div class="ov-wrap">
         <div class="drivers-col">
-          <div class="col-head">
-            <div class="col-head-title">Active Drivers</div>
-            <div class="col-head-count">Fleet <em id="driverCount">0</em></div>
+          <div class="col-hd">
+            <div class="col-hd-sub">Fleet</div>
+            <div class="col-hd-title"><em id="dCount">0</em> Drivers</div>
           </div>
-          <input class="search-box" type="text" placeholder="Search name or truck..." id="searchBox" oninput="filterDrivers()">
-          <div class="drivers-list" id="driversList"><div style="padding:18px;font-size:11px;color:var(--dim)">Loading...</div></div>
+          <input class="search-box" type="text" placeholder="Search..." id="searchBox" oninput="filterDrivers()">
+          <div class="drivers-list" id="driversList"><div style="padding:14px;font-size:12px;color:var(--dim)">Loading...</div></div>
         </div>
-        <!-- DETAIL -->
         <div class="detail-col">
           <div class="detail-empty" id="detailEmpty">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+            <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg></div>
             <p>Select a driver to view their inspections</p>
           </div>
           <div class="detail-content" id="detailContent">
-            <div class="detail-head">
+            <div class="detail-hd">
               <div class="detail-name" id="detailName">—</div>
               <div class="detail-sub" id="detailSub"></div>
             </div>
-            <div class="inspections-area" id="inspList"></div>
+            <div class="insp-list" id="inspList"></div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- FEED TAB -->
+    <!-- FEED -->
     <div class="tab" id="tabFeed">
       <div class="feed-wrap">
-        <div class="tab-title">Inspection Feed</div>
-        <div class="tab-sub">All submitted inspections — newest first</div>
+        <div class="page-title">Inspection Feed</div>
+        <div class="page-sub">All submitted inspections — newest first</div>
         <div id="feedList"><div class="feed-empty">Loading...</div></div>
       </div>
     </div>
 
-    <!-- MANAGE TAB -->
+    <!-- MANAGE -->
     <div class="tab" id="tabManage">
       <div class="manage-wrap">
-        <div class="tab-title">Manage</div>
-        <div class="tab-sub">Create accounts and configure inspection steps</div>
-
-        <!-- create user -->
+        <div class="page-title">Admin Panel</div>
+        <div class="page-sub">Manage accounts and inspection steps</div>
         <div class="manage-section">
-          <div class="manage-section-head">Create Account</div>
+          <div class="manage-sec-hd">Create Account</div>
           <div class="form-grid">
-            <div class="form-group"><label class="form-label">Full Name *</label><input class="form-input" type="text" id="newName" placeholder="John Smith"></div>
-            <div class="form-group"><label class="form-label">Role *</label><select class="form-select" id="newRole" onchange="toggleRoleFields()"><option value="driver">Driver</option><option value="agent">Dispatcher</option></select></div>
+            <div class="fg"><label class="flbl">Full Name *</label><input class="finput" type="text" id="nName" placeholder="John Smith"></div>
+            <div class="fg"><label class="flbl">Role *</label><select class="fselect" id="nRole" onchange="toggleRoleFields()"><option value="driver">Driver</option><option value="agent">Dispatcher</option></select></div>
           </div>
           <div id="driverFields">
             <div class="form-grid">
-              <div class="form-group"><label class="form-label">Truck Model</label><input class="form-input" type="text" id="newTruck" placeholder="Freightliner Cascadia 2022"></div>
-              <div class="form-group"><label class="form-label">Truck Number</label><input class="form-input" type="text" id="newTruckNum" placeholder="TRK-003"></div>
+              <div class="fg"><label class="flbl">Truck Model</label><input class="finput" type="text" id="nTruck" placeholder="Freightliner Cascadia 2022"></div>
+              <div class="fg"><label class="flbl">Truck Number</label><input class="finput" type="text" id="nTruckNum" placeholder="TRK-003"></div>
             </div>
-            <div class="form-group"><label class="form-label">4-Digit PIN *</label><input class="form-input" type="text" id="newPin" maxlength="6" placeholder="e.g. 1234" style="width:200px"></div>
-            <div class="role-fields">Driver login: name picker on the login screen, then PIN entry. No password needed.</div>
+            <div class="fg" style="max-width:200px"><label class="flbl">4-Digit PIN *</label><input class="finput" type="text" id="nPin" maxlength="6" placeholder="e.g. 1234"></div>
+            <div class="role-hint">Driver login: picks name on login screen → enters this PIN. No password needed.</div>
           </div>
           <div id="agentFields" style="display:none">
             <div class="form-grid">
-              <div class="form-group"><label class="form-label">Username *</label><input class="form-input" type="text" id="newUsername" autocapitalize="none" placeholder="jsmith"></div>
-              <div class="form-group"><label class="form-label">Password *</label><input class="form-input" type="password" id="newPassword" placeholder="min 6 chars"></div>
+              <div class="fg"><label class="flbl">Username *</label><input class="finput" type="text" id="nUsername" autocapitalize="none" placeholder="jsmith"></div>
+              <div class="fg"><label class="flbl">Password *</label><input class="finput" type="password" id="nPassword" placeholder="min 6 chars"></div>
             </div>
           </div>
-          <button class="btn-create" onclick="createUser()"><span>Create Account</span><span>&#8594;</span></button>
+          <button class="btn-create" onclick="createUser()"><span>Create Account</span><span>→</span></button>
           <div class="alert-box" id="createAlert"></div>
         </div>
-
-        <!-- users table -->
         <div class="manage-section">
-          <div class="manage-section-head">All Accounts</div>
-          <div id="usersTable"><div style="font-size:11px;color:var(--dim)">Loading...</div></div>
+          <div class="manage-sec-hd">All Accounts</div>
+          <div id="usersTable"><div style="font-size:12px;color:var(--dim)">Loading...</div></div>
         </div>
-
-        <!-- inspection steps -->
         <div class="manage-section">
-          <div class="manage-section-head">Inspection Steps</div>
-          <div id="stepsTable"><div style="font-size:11px;color:var(--dim)">Loading...</div></div>
-          <button class="btn-add-step" onclick="toggleAddStep()">+ Add Custom Step</button>
+          <div class="manage-sec-hd">Inspection Steps</div>
+          <div id="stepsTable"><div style="font-size:12px;color:var(--dim)">Loading...</div></div>
+          <button class="btn-add-step" onclick="toggleAddStepForm()">+ Add Custom Step</button>
           <div class="add-step-form" id="addStepForm">
             <div class="form-grid">
-              <div class="form-group"><label class="form-label">Step Label *</label><input class="form-input" type="text" id="newStepLabel" placeholder="e.g. Fuel Level"></div>
-              <div class="form-group"><label class="form-label">Instruction *</label><input class="form-input" type="text" id="newStepInstr" placeholder="e.g. Photograph the fuel gauge..."></div>
+              <div class="fg"><label class="flbl">Label *</label><input class="finput" type="text" id="nsLabel" placeholder="e.g. Fuel Level"></div>
+              <div class="fg"><label class="flbl">Instruction *</label><input class="finput" type="text" id="nsInstr" placeholder="e.g. Photograph the fuel gauge..."></div>
             </div>
-            <button class="btn-create" style="margin-top:10px" onclick="addStep()"><span>Add Step</span><span>&#8594;</span></button>
+            <button class="btn-create" style="margin-top:10px" onclick="addStep()"><span>Add Step</span><span>→</span></button>
             <div class="alert-box" id="stepAlert"></div>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -354,292 +341,225 @@ body{background:var(--bg);color:var(--white);font-family:'IBM Plex Mono',monospa
   <img class="lb-img" id="lbImg" src="" alt="">
   <div class="lb-meta" id="lbMeta"></div>
   <div class="lb-nav" onclick="event.stopPropagation()">
-    <button onclick="lbNav(-1)">&#8592; Prev</button>
-    <button onclick="lbNav(1)">Next &#8594;</button>
+    <button onclick="lbNav(-1)">← Prev</button>
+    <button onclick="lbNav(1)">Next →</button>
   </div>
 </div>
 
 <script>
-const S = { drivers:[], selected:null, lbPhotos:[], lbIdx:0 };
-
-async function init() {
-  try {
-    const r = await fetch('/api/me');
-    if (!r.ok) { window.location.href='/login'; return; }
-    const u = await r.json();
-    if (u.role === 'driver') { window.location.href='/driver/inspect'; return; }
-    document.getElementById('agentName').textContent = u.name||u.username;
-    loadStats(); loadDrivers();
-  } catch(e) { window.location.href='/login'; }
+const S={drivers:[],sel:null,isAdmin:false,lbPhotos:[],lbIdx:0};
+async function init(){
+  try{
+    const r=await fetch('/api/me');if(!r.ok){window.location.href='/login';return;}
+    const u=await r.json();
+    if(u.role==='driver'){window.location.href='/driver/inspect';return;}
+    S.isAdmin=u.role==='superadmin';
+    document.getElementById('agentName').textContent=u.name||u.username;
+    document.getElementById('roleBadge').textContent=S.isAdmin?'Admin':'Dispatcher';
+    if(S.isAdmin){document.getElementById('navManage').style.display='flex';document.getElementById('manSep').style.display='block';}
+    loadStats();loadDrivers();
+  }catch(e){window.location.href='/login';}
 }
-
-async function loadStats() {
-  try {
-    const d = await (await fetch('/api/agent/stats')).json();
-    document.getElementById('sDrivers').textContent = d.totalDrivers;
-    document.getElementById('sTotal').textContent = d.totalInspections;
-    document.getElementById('sToday').textContent = d.todayInspections;
-    document.getElementById('sPhotos').textContent = d.totalPhotos;
-  } catch(e) {}
+async function loadStats(){
+  try{
+    const d=await(await fetch('/api/agent/stats')).json();
+    document.getElementById('sD').textContent=d.totalDrivers;document.getElementById('sT').textContent=d.totalInspections;
+    document.getElementById('sTd').textContent=d.todayInspections;document.getElementById('sP').textContent=d.totalPhotos;
+  }catch(e){}
 }
-
-async function loadDrivers() {
-  try {
-    S.drivers = await (await fetch('/api/agent/drivers')).json();
-    document.getElementById('driverCount').textContent = S.drivers.filter(d=>d.active).length;
+async function loadDrivers(){
+  try{
+    S.drivers=await(await fetch('/api/agent/drivers')).json();
+    document.getElementById('dCount').textContent=S.drivers.filter(d=>d.active).length;
     renderDrivers(S.drivers);
-  } catch(e) {}
+  }catch(e){}
 }
-
-function renderDrivers(list) {
-  const el = document.getElementById('driversList');
-  if (!list.length) { el.innerHTML='<div style="padding:18px;font-size:11px;color:var(--dim)">No drivers</div>'; return; }
-  el.innerHTML = list.map(d => {
-    const init = (d.full_name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    const last = d.last_inspection ? fmtShort(d.last_inspection) : 'No inspections';
-    const active = S.selected?.id === d.id;
-    return `<div class="driver-row${active?' active':''}${!d.active?' dr-inactive':''}" onclick="selectDriver(${d.id})" data-id="${d.id}">
-      <div class="dr-avatar">${init}</div>
-      <div class="dr-meta">
-        <div class="dr-name">${esc(d.full_name)}</div>
-        <div class="dr-truck">${esc(d.truck_model||'No truck')}${d.truck_number?' · '+esc(d.truck_number):''}</div>
-        <div class="dr-last">${last}</div>
-      </div>
-      <div class="dr-count">${d.submitted_count||0}</div>
+function renderDrivers(list){
+  const el=document.getElementById('driversList');
+  if(!list.length){el.innerHTML='<div style="padding:14px;font-size:12px;color:var(--dim)">No drivers</div>';return;}
+  el.innerHTML=list.map(d=>{
+    const init=(d.full_name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const last=d.last_inspection?fmtShort(d.last_inspection):'No inspections';
+    const active=S.sel?.id===d.id;
+    return`<div class="driver-row${active?' active':''}${!d.active?' dr-inactive':''}" onclick="selectDriver(${d.id})" data-id="${d.id}">
+      <div class="dr-av">${init}</div>
+      <div class="dr-info"><div class="dr-name">${esc(d.full_name)}</div><div class="dr-truck">${esc(d.truck_model||'No truck')}${d.truck_number?' · '+esc(d.truck_number):''}</div><div class="dr-last">${last}</div></div>
+      <div class="dr-cnt">${d.submitted_count||0}</div>
     </div>`;
   }).join('');
 }
-
-function filterDrivers() {
-  const q = document.getElementById('searchBox').value.toLowerCase();
-  renderDrivers(S.drivers.filter(d => (d.full_name||'').toLowerCase().includes(q) || (d.truck_model||'').toLowerCase().includes(q) || (d.truck_number||'').toLowerCase().includes(q)));
+function filterDrivers(){
+  const q=document.getElementById('searchBox').value.toLowerCase();
+  renderDrivers(S.drivers.filter(d=>(d.full_name||'').toLowerCase().includes(q)||(d.truck_model||'').toLowerCase().includes(q)||(d.truck_number||'').toLowerCase().includes(q)));
 }
-
-async function selectDriver(id) {
-  const d = S.drivers.find(x=>x.id===id);
-  if (!d) return;
-  S.selected = d;
-  document.querySelectorAll('.driver-row').forEach(el=>el.classList.toggle('active', parseInt(el.dataset.id)===id));
+async function selectDriver(id){
+  const d=S.drivers.find(x=>x.id===id);if(!d)return;
+  S.sel=d;
+  document.querySelectorAll('.driver-row').forEach(el=>el.classList.toggle('active',parseInt(el.dataset.id)===id));
   document.getElementById('detailEmpty').style.display='none';
-  const content = document.getElementById('detailContent');
-  content.style.display='flex';
-  document.getElementById('detailName').textContent = d.full_name;
-  document.getElementById('detailSub').innerHTML = `<span>${esc(d.truck_model||'No truck')}</span><span>${d.submitted_count||0} inspection${(d.submitted_count||0)!==1?'s':''}</span>`;
-  const list = document.getElementById('inspList');
-  list.innerHTML='<div style="padding:14px;font-size:11px;color:var(--dim)">Loading...</div>';
-  try {
-    const insps = await (await fetch(`/api/agent/drivers/${id}/inspections`)).json();
-    if (!insps.length) { list.innerHTML='<div style="padding:14px;font-size:11px;color:var(--dim)">No submitted inspections.</div>'; return; }
-    list.innerHTML = insps.map(i=>{
-      const mapUrl = i.latitude?`https://www.google.com/maps?q=${i.latitude},${i.longitude}`:null;
-      return `<div class="insp-card">
-        <div class="insp-card-head" onclick="toggleCard('${i.id}')">
-          <div>
-            <div class="insp-card-date">${fmtDate(i.submitted_at)}</div>
-            <div class="insp-card-sub">${i.photo_count} photos${mapUrl?' · GPS recorded':''}</div>
-          </div>
-          <div class="insp-card-right">
-            <div class="chip ok">Submitted</div>
-            <span class="chevron" id="chev-${i.id}">&#8964;</span>
-          </div>
+  const content=document.getElementById('detailContent');content.style.display='flex';
+  document.getElementById('detailName').textContent=d.full_name;
+  document.getElementById('detailSub').innerHTML=`<span>${esc(d.truck_model||'No truck')}${d.truck_number?' · '+esc(d.truck_number):''}</span><span>${d.submitted_count||0} inspection${(d.submitted_count||0)!==1?'s':''}</span>`;
+  const list=document.getElementById('inspList');
+  list.innerHTML='<div style="padding:12px;font-size:12px;color:var(--dim)">Loading...</div>';
+  try{
+    const insps=await(await fetch(`/api/agent/drivers/${id}/inspections`)).json();
+    if(!insps.length){list.innerHTML='<div style="padding:12px;font-size:12px;color:var(--dim)">No submitted inspections yet.</div>';return;}
+    list.innerHTML=insps.map(i=>{
+      const mapUrl=i.latitude?`https://www.google.com/maps?q=${i.latitude},${i.longitude}`:null;
+      return`<div class="insp-card">
+        <div class="insp-card-hd" onclick="toggleCard('${i.id}')">
+          <div><div class="insp-card-date">${fmtDate(i.submitted_at)}</div><div class="insp-card-sub">${i.photo_count} photos${mapUrl?' · GPS recorded':''}</div></div>
+          <div class="insp-card-r"><div class="pill-sm ok">Submitted</div><span class="chev" id="chev-${i.id}">⌄</span></div>
         </div>
-        <div class="insp-card-body" id="body-${i.id}">
-          <div id="content-${i.id}"><div style="font-size:11px;color:var(--dim)">Loading...</div></div>
-        </div>
+        <div class="insp-card-body" id="body-${i.id}"><div id="cnt-${i.id}"><div style="font-size:12px;color:var(--dim)">Loading...</div></div></div>
       </div>`;
     }).join('');
-  } catch(e) { list.innerHTML='<div style="font-size:11px;color:var(--red)">Error loading inspections.</div>'; }
+  }catch(e){list.innerHTML='<div style="font-size:12px;color:var(--red)">Error loading.</div>';}
 }
-
-async function toggleCard(id) {
-  const body=document.getElementById(`body-${id}`);
-  const chev=document.getElementById(`chev-${id}`);
-  if (body.classList.contains('open')) { body.classList.remove('open'); chev.classList.remove('open'); return; }
-  body.classList.add('open'); chev.classList.add('open');
-  const c=document.getElementById(`content-${id}`);
-  if (c.dataset.loaded) return;
-  try {
-    const insp=await (await fetch(`/api/agent/inspections/${id}`)).json();
+async function toggleCard(id){
+  const body=document.getElementById(`body-${id}`),chev=document.getElementById(`chev-${id}`);
+  if(body.classList.contains('open')){body.classList.remove('open');chev.classList.remove('open');return;}
+  body.classList.add('open');chev.classList.add('open');
+  const c=document.getElementById(`cnt-${id}`);if(c.dataset.loaded)return;
+  try{
+    const insp=await(await fetch(`/api/agent/inspections/${id}`)).json();
     c.dataset.loaded='1';
     const photos=insp.photos||[];
     const mapUrl=insp.latitude?`https://www.google.com/maps?q=${insp.latitude},${insp.longitude}`:null;
     c.innerHTML=`
-      ${photos.length?`<div class="photo-grid">${photos.map((p,i)=>`<div class="photo-cell" onclick="openLb('${id}',${i})"><img src="${esc(p.file_path)}" loading="lazy" alt=""><div class="photo-cell-lbl">${esc(p.step_label||'Step '+p.step_number)}</div><div class="photo-cell-num">${p.step_number}</div></div>`).join('')}</div>`:'<div style="font-size:11px;color:var(--dim);margin-bottom:12px">No photos</div>'}
+      ${photos.length?`<div class="photo-grid">${photos.map((p,i)=>`<div class="photo-cell" onclick="openLb('${id}',${i})"><img src="${esc(p.file_path)}" loading="lazy"><div class="photo-cell-lbl">${esc(p.step_label||'Step '+p.step_number)}</div><div class="photo-cell-num">${p.step_number}</div></div>`).join('')}</div>`:'<div style="font-size:12px;color:var(--dim);margin-bottom:12px">No photos</div>'}
       <div class="drows">
         <div class="drow"><span class="k">Driver</span><span class="v">${esc(insp.driver_name)}</span></div>
         <div class="drow"><span class="k">Truck</span><span class="v">${esc(insp.truck_model||'—')}</span></div>
         ${insp.truck_number?`<div class="drow"><span class="k">Truck No.</span><span class="v">${esc(insp.truck_number)}</span></div>`:''}
         <div class="drow"><span class="k">Submitted</span><span class="v">${fmtDate(insp.submitted_at)}</span></div>
         <div class="drow"><span class="k">Started</span><span class="v">${fmtDate(insp.started_at)}</span></div>
-        <div class="drow"><span class="k">Location</span><span class="v">${mapUrl?`<a href="${mapUrl}" target="_blank">View on Maps &#8599;</a>`:'Not recorded'}</span></div>
+        <div class="drow"><span class="k">GPS</span><span class="v">${mapUrl?`<a href="${mapUrl}" target="_blank">View on Maps ↗</a>`:'Not recorded'}</span></div>
         ${insp.latitude?`<div class="drow"><span class="k">Coordinates</span><span class="v">${insp.latitude.toFixed(5)}, ${insp.longitude.toFixed(5)}</span></div>`:''}
       </div>
-      ${insp.notes?`<div class="notes-block">Notes: ${esc(insp.notes)}</div>`:''}
-      <div class="card-btns">
+      ${insp.notes?`<div class="notes-box">Notes: ${esc(insp.notes)}</div>`:''}
+      <div class="card-actions">
         <a class="btn-dl" href="/api/agent/inspections/${id}/download" download>
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Download ZIP
         </a>
       </div>`;
-    window._photos=window._photos||{}; window._photos[id]=photos;
-  } catch(e) { c.innerHTML='<div style="font-size:11px;color:var(--red)">Error loading details.</div>'; }
+    window._lbPhotos=window._lbPhotos||{};window._lbPhotos[id]=photos;
+  }catch(e){c.innerHTML='<div style="font-size:12px;color:var(--red)">Error loading.</div>';}
 }
-
-// LIGHTBOX
-function openLb(inspId, idx) {
-  const photos=(window._photos&&window._photos[inspId])||[]; if(!photos.length)return;
-  S.lbPhotos=photos; S.lbIdx=idx; showLbPhoto();
-  document.getElementById('lightbox').classList.add('open');
-}
-function showLbPhoto(){
-  const p=S.lbPhotos[S.lbIdx]; if(!p)return;
-  document.getElementById('lbImg').src=p.file_path;
-  document.getElementById('lbMeta').textContent=`Step ${p.step_number}${p.step_label?' — '+p.step_label:''} | ${S.lbIdx+1} of ${S.lbPhotos.length}${p.taken_at?' | '+fmtDate(p.taken_at):''}`;
-}
-function lbNav(dir){const n=S.lbIdx+dir;if(n<0||n>=S.lbPhotos.length)return;S.lbIdx=n;showLbPhoto();}
+function openLb(id,idx){const p=(window._lbPhotos&&window._lbPhotos[id])||[];if(!p.length)return;S.lbPhotos=p;S.lbIdx=idx;showLbPhoto();document.getElementById('lightbox').classList.add('open');}
+function showLbPhoto(){const p=S.lbPhotos[S.lbIdx];if(!p)return;document.getElementById('lbImg').src=p.file_path;document.getElementById('lbMeta').textContent=`Step ${p.step_number}${p.step_label?' — '+p.step_label:''} | ${S.lbIdx+1} of ${S.lbPhotos.length}`;}
+function lbNav(d){const n=S.lbIdx+d;if(n<0||n>=S.lbPhotos.length)return;S.lbIdx=n;showLbPhoto();}
 function closeLb(){document.getElementById('lightbox').classList.remove('open');}
-document.addEventListener('keydown',e=>{
-  if(!document.getElementById('lightbox').classList.contains('open'))return;
-  if(e.key==='ArrowLeft')lbNav(-1);if(e.key==='ArrowRight')lbNav(1);if(e.key==='Escape')closeLb();
-});
+document.addEventListener('keydown',e=>{if(!document.getElementById('lightbox').classList.contains('open'))return;if(e.key==='ArrowLeft')lbNav(-1);if(e.key==='ArrowRight')lbNav(1);if(e.key==='Escape')closeLb();});
 
-// FEED
-async function loadFeed() {
+async function loadFeed(){
   const el=document.getElementById('feedList');
-  try {
+  try{
     const rows=await(await fetch('/api/agent/inspections')).json();
-    if(!rows.length){el.innerHTML='<div class="feed-empty">No inspections submitted yet.</div>';return;}
+    if(!rows.length){el.innerHTML='<div class="feed-empty">No inspections yet.</div>';return;}
     el.innerHTML=rows.map(i=>{
       const mapUrl=i.latitude?`https://www.google.com/maps?q=${i.latitude},${i.longitude}`:null;
-      return `<div class="feed-item">
-        <div class="feed-timeline"><div class="feed-dot"></div><div class="feed-line"></div></div>
+      return`<div class="feed-item">
+        <div class="feed-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg></div>
         <div class="feed-body">
           <div class="feed-driver">${esc(i.driver_name)}</div>
-          <div class="feed-truck">${esc(i.truck_model||'Unknown truck')}${i.truck_number?' · '+esc(i.truck_number):''}</div>
+          <div class="feed-truck">${esc(i.truck_model||'Unknown')}${i.truck_number?' · '+esc(i.truck_number):''}</div>
           <div class="feed-time">${fmtDate(i.submitted_at)} · ${i.photo_count} photos</div>
-          ${mapUrl?`<div class="feed-loc"><a href="${mapUrl}" target="_blank">View GPS Location &#8599;</a></div>`:''}
-          <a class="feed-action" href="/api/agent/inspections/${i.id}/download" download>
+          ${mapUrl?`<div class="feed-loc"><a href="${mapUrl}" target="_blank">View GPS Location ↗</a></div>`:''}
+          <a class="feed-dl" href="/api/agent/inspections/${i.id}/download" download>
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Download ZIP
           </a>
         </div>
       </div>`;
     }).join('');
-  } catch(e){el.innerHTML='<div class="feed-empty">Error loading feed.</div>';}
+  }catch(e){el.innerHTML='<div class="feed-empty">Error loading.</div>';}
 }
-
-// MANAGE
-function toggleRoleFields() {
-  const r=document.getElementById('newRole').value;
+function toggleRoleFields(){
+  const r=document.getElementById('nRole').value;
   document.getElementById('driverFields').style.display=r==='driver'?'block':'none';
   document.getElementById('agentFields').style.display=r==='agent'?'block':'none';
 }
-
-async function loadUsers() {
-  try {
+async function loadUsers(){
+  try{
     const users=await(await fetch('/api/admin/users')).json();
     const el=document.getElementById('usersTable');
-    if(!users.length){el.innerHTML='<div style="font-size:11px;color:var(--dim)">No accounts</div>';return;}
+    if(!users.length){el.innerHTML='<div style="font-size:12px;color:var(--dim)">No accounts</div>';return;}
     el.innerHTML=`<div class="utbl">
-      <div class="utbl-head"><span>Name</span><span>Username</span><span>Role</span><span>Truck</span><span>PIN</span><span>Status</span></div>
+      <div class="utbl-hd"><span>Name</span><span>Username</span><span>Role</span><span>Truck</span><span>PIN</span><span>Status</span></div>
       ${users.map(u=>`<div class="utbl-row">
-        <span style="font-weight:500">${esc(u.full_name)}</span>
+        <span style="font-weight:600">${esc(u.full_name)}</span>
         <span style="color:var(--dim)">${esc(u.username)}</span>
-        <span><span class="role-tag ${u.role}">${u.role}</span></span>
-        <span style="color:var(--dim);font-size:10px">${esc(u.truck_model||'—')}${u.truck_number?' · '+esc(u.truck_number):''}</span>
-        <span class="pin-badge">${u.driver_pin?u.driver_pin:'—'}</span>
-        <span><button class="toggle-btn ${u.active?'deactivate':'activate'}" onclick="toggleUser(${u.id},${u.active})">${u.active?'Disable':'Enable'}</button></span>
+        <span><span class="rpill ${u.role}">${u.role}</span></span>
+        <span style="color:var(--dim);font-size:11px">${esc(u.truck_model||'—')}</span>
+        <span class="pin-show">${u.driver_pin||'—'}</span>
+        <span><button class="tbtn ${u.active?'dis':'en'}" onclick="toggleUser(${u.id},${u.active})">${u.active?'Disable':'Enable'}</button></span>
       </div>`).join('')}
     </div>`;
-  } catch(e) {}
+  }catch(e){}
 }
-
-async function createUser() {
-  const name=document.getElementById('newName').value.trim();
-  const role=document.getElementById('newRole').value;
+async function createUser(){
+  const name=document.getElementById('nName').value.trim();
+  const role=document.getElementById('nRole').value;
   const al=document.getElementById('createAlert');
-  if(!name){showAlert(al,'error','Full name is required.');return;}
+  if(!name){showAlert(al,'error','Full name required.');return;}
   let body={full_name:name,role};
   if(role==='driver'){
-    const pin=document.getElementById('newPin').value.trim();
+    const pin=document.getElementById('nPin').value.trim();
     if(!pin||pin.length<4){showAlert(al,'error','PIN must be at least 4 digits.');return;}
-    body.driver_pin=pin;
-    body.truck_model=document.getElementById('newTruck').value.trim();
-    body.truck_number=document.getElementById('newTruckNum').value.trim();
-  } else {
-    const u=document.getElementById('newUsername').value.trim();
-    const p=document.getElementById('newPassword').value;
+    body.driver_pin=pin;body.truck_model=document.getElementById('nTruck').value.trim();body.truck_number=document.getElementById('nTruckNum').value.trim();
+  }else{
+    const u=document.getElementById('nUsername').value.trim();const p=document.getElementById('nPassword').value;
     if(!u||!p){showAlert(al,'error','Username and password required.');return;}
-    body.username=u; body.password=p;
+    body.username=u;body.password=p;
   }
   const r=await fetch('/api/admin/users',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
   const d=await r.json();
   if(!r.ok){showAlert(al,'error',d.error||'Error');return;}
   showAlert(al,'ok',`Account for "${name}" created.`);
-  ['newName','newTruck','newTruckNum','newPin','newUsername','newPassword'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['nName','nTruck','nTruckNum','nPin','nUsername','nPassword'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   loadUsers();loadDrivers();loadStats();
 }
-
-async function toggleUser(id,active) {
-  await fetch(`/api/admin/users/${id}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({active:!active})});
-  loadUsers();loadDrivers();loadStats();
-}
-
-async function loadStepsTable() {
-  try {
+async function toggleUser(id,active){await fetch(`/api/admin/users/${id}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({active:!active})});loadUsers();loadDrivers();loadStats();}
+async function loadSteps(){
+  try{
     const steps=await(await fetch('/api/admin/steps')).json();
     const el=document.getElementById('stepsTable');
-    if(!steps.length){el.innerHTML='<div style="font-size:11px;color:var(--dim)">No steps</div>';return;}
+    if(!steps.length){el.innerHTML='<div style="font-size:12px;color:var(--dim)">No steps</div>';return;}
     el.innerHTML=`<div class="stbl">${steps.map(s=>`
       <div class="stbl-row${!s.active?' inactive':''}">
-        <div class="step-num">${s.step_number}</div>
-        <div class="step-label-text">${esc(s.label)}</div>
-        <div class="step-instr">${esc(s.instruction)}</div>
-        <button class="step-toggle ${s.active?'off':'on'}" onclick="toggleStep(${s.id},${s.active})">${s.active?'Disable':'Enable'}</button>
+        <div class="snbadge">${s.step_number}</div>
+        <div class="sinfo"><div class="sinfo-lbl">${esc(s.label)}</div><div class="sinfo-inst">${esc(s.instruction)}</div></div>
+        <button class="stbtn ${s.active?'on':'off'}" onclick="toggleStep(${s.id},${s.active})">${s.active?'Disable':'Enable'}</button>
       </div>`).join('')}</div>`;
-  } catch(e) {}
+  }catch(e){}
 }
-
-async function toggleStep(id,active) {
-  await fetch(`/api/admin/steps/${id}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({active:!active})});
-  loadStepsTable();
-}
-
-function toggleAddStep() {
-  const f=document.getElementById('addStepForm');
-  f.style.display=f.style.display==='block'?'none':'block';
-}
-
-async function addStep() {
-  const label=document.getElementById('newStepLabel').value.trim();
-  const instr=document.getElementById('newStepInstr').value.trim();
+async function toggleStep(id,active){await fetch(`/api/admin/steps/${id}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({active:!active})});loadSteps();}
+function toggleAddStepForm(){const f=document.getElementById('addStepForm');f.style.display=f.style.display==='block'?'none':'block';}
+async function addStep(){
+  const label=document.getElementById('nsLabel').value.trim();const instr=document.getElementById('nsInstr').value.trim();
   const al=document.getElementById('stepAlert');
   if(!label||!instr){showAlert(al,'error','Both fields required.');return;}
   const r=await fetch('/api/admin/steps',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({label,instruction:instr})});
-  if(!r.ok){showAlert(al,'error','Error adding step.');return;}
+  if(!r.ok){showAlert(al,'error','Error.');return;}
   showAlert(al,'ok','Step added.');
-  document.getElementById('newStepLabel').value='';
-  document.getElementById('newStepInstr').value='';
-  loadStepsTable();
+  document.getElementById('nsLabel').value='';document.getElementById('nsInstr').value='';loadSteps();
 }
-
-// TABS
-function showTab(name) {
+function showTab(name){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById(`tab${name}`).classList.add('active');
   document.getElementById(`nav${name}`).classList.add('active');
   if(name==='Feed')loadFeed();
-  if(name==='Manage'){loadUsers();loadStepsTable();}
+  if(name==='Manage'){loadUsers();loadSteps();}
 }
-
-// UTILS
-function fmtDate(dt){if(!dt)return 'N/A';const d=new Date(dt.includes('T')?dt:dt+'Z');return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});}
-function fmtShort(dt){if(!dt)return 'N/A';const d=new Date(dt.includes('T')?dt:dt+'Z');return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+function fmtDate(dt){if(!dt)return'N/A';const d=new Date(dt.includes('T')?dt:dt+'Z');return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});}
+function fmtShort(dt){if(!dt)return'N/A';const d=new Date(dt.includes('T')?dt:dt+'Z');return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
 function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function showAlert(el,type,msg){el.textContent=msg;el.style.color=type==='ok'?'var(--green)':'var(--red)';el.style.borderColor=type==='ok'?'rgba(54,201,126,.25)':'rgba(240,78,78,.25)';el.style.background=type==='ok'?'rgba(54,201,126,.06)':'rgba(240,78,78,.06)';el.style.display='block';setTimeout(()=>el.style.display='none',4000);}
+function showAlert(el,type,msg){el.textContent=msg;el.style.color=type==='ok'?'var(--green)':'var(--red)';el.style.borderColor=type==='ok'?'rgba(52,211,153,.3)':'rgba(248,113,113,.3)';el.style.background=type==='ok'?'var(--green-light)':'var(--red-light)';el.style.display='block';setTimeout(()=>el.style.display='none',4000);}
 async function logout(){await fetch('/api/logout',{method:'POST'});window.location.href='/login';}
-
 init();
 </script>
 </body>
