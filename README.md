@@ -1,7 +1,1 @@
-[build]
-builder = "nixpacks"
 
-[deploy]
-startCommand = "node server.js"
-restartPolicyType = "on_failure"
-restartPolicyMaxRetries = 3
