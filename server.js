@@ -82,7 +82,7 @@ app.post('/api/auth/webauthn/register-options', auth, (req, res) => {
     rp: { name: 'Kurtex', id: req.hostname },
     user: { id: Buffer.from(String(user.id)).toString('base64'), name: user.username, displayName: user.name },
     pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
-    authenticatorSelection: { userVerification: 'required', residentKey: 'discouraged' },
+    authenticatorSelection: { userVerification: 'required', residentKey: 'discouraged', authenticatorAttachment: 'platform' },
     timeout: 60000
   });
 });
