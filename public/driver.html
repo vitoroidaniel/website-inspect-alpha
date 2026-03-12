@@ -2,175 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>FleetInspect — Inspection</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Kurtex — Inspection</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#f0f4ff;--surface:#fff;--surface2:#f7f8fc;--surface3:#eef0f8;
-  --border:#e4e8f0;--border2:#d0d6e8;
-  --text:#1a1d2e;--dim:#6b7280;--muted:#b0b8cc;
-  --brand:#4f6ef7;--brand2:#3a57e8;--brand-light:rgba(79,110,247,.1);
-  --green:#22c55e;--green-light:rgba(34,197,94,.1);
-  --red:#ef4444;--red-light:rgba(239,68,68,.1);
-  --amber:#f59e0b;--amber-light:rgba(245,158,11,.1);
-  --radius:20px;--radius-sm:14px;
-}
-html,body{height:100%;font-family:'Nunito',sans-serif}
-body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;min-height:100vh;-webkit-font-smoothing:antialiased;overscroll-behavior:none}
-
-/* HEADER */
-.hdr{background:#fff;border-bottom:2px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:100}
-.logo-wrap{display:flex;align-items:center;gap:10px}
-.logo-mark{width:38px;height:38px;background:var(--brand);border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 12px rgba(79,110,247,.3)}
-.logo-mark svg{width:20px;height:20px}
-.logo-text{font-size:20px;font-weight:900;color:var(--text);letter-spacing:-.4px}
-.logo-text span{color:var(--brand)}
-.hdr-r{display:flex;align-items:center;gap:10px}
-.d-pill strong{font-size:15px;font-weight:800;color:var(--text);display:block;text-align:right;line-height:1.2}
-.d-pill span{font-size:13px;color:var(--dim);font-weight:600}
-.btn-exit{background:var(--surface2);border:2px solid var(--border);border-radius:12px;color:var(--dim);padding:8px 16px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s}
-.btn-exit:hover{border-color:var(--red);color:var(--red)}
-
-.screen{display:none;flex-direction:column;flex:1}
-.screen.active{display:flex}
-
-/* HOME */
-.type-bar{background:#fff;border-bottom:2px solid var(--border);padding:18px 20px;flex-shrink:0}
-.type-bar-label{font-size:14px;font-weight:700;color:var(--dim);margin-bottom:12px}
-.type-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.type-btn{background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-sm);padding:14px 8px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all .18s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--dim)}
-.type-btn svg{width:24px;height:24px}
-.type-btn.active{background:var(--brand-light);border-color:var(--brand);color:var(--brand)}
-.type-btn:hover:not(.active){border-color:var(--brand);color:var(--brand)}
-
-.home-scroll{flex:1;overflow-y:auto;padding:20px}
-.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-.tile{background:#fff;border:2px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px}
-.tile-lbl{font-size:13px;font-weight:700;color:var(--dim);margin-bottom:4px}
-.tile-val{font-size:17px;font-weight:800;color:var(--text)}
-.tile-val.brand{color:var(--brand)}
-
-.gps-row{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:16px}
-.gps-dot{width:10px;height:10px;border-radius:50%;background:var(--muted);flex-shrink:0}
-.gps-dot.on{background:var(--green);box-shadow:0 0 0 3px rgba(34,197,94,.2);animation:gpspulse 2s infinite}
-.gps-dot.err{background:var(--red)}
-@keyframes gpspulse{0%,100%{box-shadow:0 0 0 3px rgba(34,197,94,.2)}50%{box-shadow:0 0 0 6px rgba(34,197,94,.08)}}
-#gpsText{font-size:15px;font-weight:600;color:var(--dim)}
-
-.btn-start{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--brand);color:#fff;border:none;padding:20px 24px;border-radius:var(--radius);font-family:'Nunito',sans-serif;font-size:19px;font-weight:900;cursor:pointer;box-shadow:0 6px 24px rgba(79,110,247,.35);transition:all .18s;margin-bottom:20px;letter-spacing:-.3px}
-.btn-start:hover{background:var(--brand2);transform:translateY(-2px)}
-.btn-start .badge{background:rgba(255,255,255,.22);font-size:14px;font-weight:700;padding:5px 13px;border-radius:20px}
-
-.sec-hd{font-size:14px;font-weight:800;color:var(--dim);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px}
-.insp-row{background:#fff;border:2px solid var(--border);border-radius:var(--radius-sm);padding:14px 18px;margin-bottom:9px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.insp-meta{font-size:14px;color:var(--dim);font-weight:600;margin-bottom:3px}
-.insp-info{font-size:16px;font-weight:800;color:var(--text)}
-.type-chip{font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;margin-right:7px;display:inline-block}
-.type-chip.pickup{background:var(--brand-light);color:var(--brand)}
-.type-chip.drop{background:var(--amber-light);color:#b45309}
-.type-chip.general{background:rgba(139,92,246,.08);color:#7c3aed}
-.status-pill{font-size:13px;font-weight:800;padding:5px 13px;border-radius:20px;flex-shrink:0}
-.status-pill.submitted{background:var(--green-light);color:#16a34a}
-.status-pill.in_progress{background:var(--amber-light);color:#b45309}
-
-/* INSPECT */
-.prog-hd{background:#fff;border-bottom:2px solid var(--border);padding:16px 20px;flex-shrink:0}
-.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.prog-lbl{font-size:17px;font-weight:800;color:var(--text)}
-.prog-ctr{font-size:16px;font-weight:700;color:var(--dim)}
-.prog-track{height:6px;background:var(--border);border-radius:6px;overflow:hidden}
-.prog-fill{height:100%;background:var(--brand);border-radius:6px;transition:width .35s ease}
-.step-dots{display:flex;gap:5px;margin-top:11px;flex-wrap:wrap}
-.sdot{width:8px;height:8px;border-radius:50%;background:var(--border2);transition:all .2s;flex-shrink:0}
-.sdot.done{background:var(--brand)}
-.sdot.active{background:var(--brand);width:22px;border-radius:4px}
-
-.inspect-body{flex:1;overflow-y:auto;padding:22px 20px;display:flex;flex-direction:column;gap:16px}
-.step-num{font-size:15px;font-weight:800;color:var(--brand);letter-spacing:.3px}
-.step-title{font-size:clamp(22px,6vw,30px);font-weight:900;color:var(--text);line-height:1.1;margin-top:4px;letter-spacing:-.4px}
-.step-desc{font-size:16px;color:var(--dim);line-height:1.65;background:#fff;border:2px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;border-left:4px solid var(--brand);font-weight:600}
-
-/* photo zone */
-.photo-zone{position:relative;width:100%;aspect-ratio:4/3;background:#fff;border:3px dashed var(--border2);border-radius:var(--radius);cursor:pointer;overflow:hidden;transition:all .18s}
-.photo-zone:hover{border-color:var(--brand);background:var(--brand-light)}
-.photo-zone.captured{border:3px solid var(--brand);border-style:solid;cursor:default}
-.ph-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
-.ph-icon{width:64px;height:64px;background:var(--surface2);border:2px solid var(--border);border-radius:18px;display:flex;align-items:center;justify-content:center}
-.ph-icon svg{width:30px;height:30px;color:var(--dim)}
-.ph-hint{font-size:17px;font-weight:800;color:var(--dim)}
-.ph-sub{font-size:14px;color:var(--muted);font-weight:600}
-.ph-preview{display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.ph-badge{display:none;position:absolute;top:12px;right:12px;background:var(--brand);color:#fff;font-size:13px;font-weight:800;padding:6px 14px;border-radius:20px;align-items:center;gap:6px}
-.upload-overlay{display:none;position:absolute;inset:0;background:rgba(240,244,255,.85);align-items:center;justify-content:center;flex-direction:column;gap:12px}
-.spinner{width:36px;height:36px;border:4px solid var(--border);border-top-color:var(--brand);border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.upload-overlay span{font-size:16px;font-weight:700;color:var(--dim)}
-.ph-err{display:none;background:var(--red-light);border:2px solid rgba(239,68,68,.2);color:var(--red);font-size:15px;font-weight:700;padding:14px 16px;border-radius:var(--radius-sm)}
-
-.photo-btns{display:flex;gap:10px}
-.btn-retake{display:none;flex:1;background:#fff;border:2px solid var(--border);border-radius:var(--radius-sm);color:var(--dim);padding:14px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;cursor:pointer;transition:all .15s}
-.btn-retake:hover{border-color:var(--brand);color:var(--brand)}
-.btn-camera{flex:2;display:flex;align-items:center;justify-content:center;gap:9px;background:#fff;border:2px solid var(--border);border-radius:var(--radius-sm);color:var(--dim);padding:14px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;cursor:pointer;transition:all .15s}
-.btn-camera:hover{border-color:var(--brand);color:var(--brand)}
-.btn-camera svg{width:18px;height:18px}
-
-.inspect-footer{background:#fff;border-top:2px solid var(--border);padding:14px 20px;display:flex;gap:10px;flex-shrink:0}
-.btn-back-step{flex:1;background:#fff;border:2px solid var(--border);border-radius:var(--radius-sm);color:var(--dim);padding:15px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;cursor:pointer;transition:all .15s}
-.btn-back-step:hover{border-color:var(--brand);color:var(--brand)}
-.btn-next{flex:2;background:var(--brand);color:#fff;border:none;border-radius:var(--radius-sm);padding:15px;font-family:'Nunito',sans-serif;font-size:17px;font-weight:900;cursor:pointer;box-shadow:0 4px 16px rgba(79,110,247,.3);transition:all .18s}
-.btn-next:hover:not(:disabled){background:var(--brand2)}
-.btn-next:disabled{background:var(--border);color:var(--muted);box-shadow:none;cursor:not-allowed}
-
-/* REVIEW */
-.review-hd{background:var(--brand);padding:24px 20px 20px;flex-shrink:0}
-.review-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.2);color:#fff;font-size:14px;font-weight:800;padding:5px 13px;border-radius:20px;margin-bottom:12px}
-.review-title{font-size:28px;font-weight:900;color:#fff;letter-spacing:-.5px}
-.review-type{font-size:15px;color:rgba(255,255,255,.7);margin-top:5px;font-weight:600}
-.review-body{flex:1;overflow-y:auto;padding:20px}
-.rev-sec-hd{font-size:14px;font-weight:800;color:var(--dim);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px}
-.review-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:22px}
-.r-thumb{position:relative;aspect-ratio:1;background:#fff;border-radius:10px;overflow:hidden;border:2px solid var(--border)}
-.r-thumb img{width:100%;height:100%;object-fit:cover}
-.r-thumb-num{position:absolute;bottom:3px;right:4px;font-size:10px;font-weight:800;color:#fff;background:rgba(0,0,0,.55);padding:2px 5px;border-radius:4px}
-.r-thumb-ok{position:absolute;top:4px;left:4px;width:18px;height:18px;background:var(--brand);border-radius:50%;display:flex;align-items:center;justify-content:center}
-.r-thumb-ok svg{width:10px;height:10px}
-.r-missing{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--red)}
-.detail-list{background:#fff;border:2px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:16px}
-.drow{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:2px solid var(--border);gap:12px}
-.drow:last-child{border-bottom:none}
-.drow .k{font-size:14px;font-weight:700;color:var(--dim)}
-.drow .v{font-size:15px;font-weight:800;color:var(--text);text-align:right}
-.drow .v a{color:var(--brand);text-decoration:none}
-.notes-ta{display:block;width:100%;background:#fff;border:2px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:14px 16px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:600;resize:none;height:90px;outline:none;transition:border-color .18s;margin-bottom:16px}
-.notes-ta:focus{border-color:var(--brand)}
-.notes-ta::placeholder{color:var(--muted)}
-.btn-submit{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--brand);color:#fff;border:none;padding:20px 24px;border-radius:var(--radius);font-family:'Nunito',sans-serif;font-size:19px;font-weight:900;cursor:pointer;box-shadow:0 6px 24px rgba(79,110,247,.35);transition:all .18s;margin-bottom:10px;letter-spacing:-.3px}
-.btn-submit:hover:not(:disabled){background:var(--brand2)}
-.btn-submit:disabled{opacity:.4;cursor:not-allowed}
-.btn-cancel-rev{display:block;width:100%;background:#fff;border:2px solid var(--border);border-radius:var(--radius);color:var(--dim);padding:16px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;cursor:pointer;transition:all .15s}
-.btn-cancel-rev:hover{border-color:var(--brand);color:var(--brand)}
-
-/* SUCCESS */
-.success-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center}
-.success-ring{width:90px;height:90px;border-radius:50%;background:var(--green-light);border:3px solid rgba(34,197,94,.25);display:flex;align-items:center;justify-content:center;margin-bottom:24px}
-.success-ring svg{width:42px;height:42px}
-.success-title{font-size:36px;font-weight:900;letter-spacing:-.6px;margin-bottom:10px;color:var(--text)}
-.success-sub{font-size:17px;color:var(--dim);line-height:1.65;margin-bottom:32px;font-weight:600}
-.btn-new-insp{display:flex;align-items:center;gap:10px;background:var(--brand);color:#fff;border:none;padding:18px 28px;border-radius:var(--radius);font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;cursor:pointer;box-shadow:0 6px 24px rgba(79,110,247,.35);transition:all .18s}
-.btn-new-insp:hover{background:var(--brand2)}
-
-#camInput{display:none}
-</style>
+<link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
 <header class="hdr">
   <div class="logo-wrap">
     <div class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="8" width="20" height="3.5" rx="1.75" fill="white"/><rect x="2" y="13" width="20" height="3.5" rx="1.75" fill="white"/><rect x="5" y="3" width="14" height="3.5" rx="1.75" fill="white"/><circle cx="7" cy="20.5" r="2.5" fill="white"/><circle cx="17" cy="20.5" r="2.5" fill="white"/></svg></div>
-    <div class="logo-text">Fleet<span>Inspect</span></div>
+    <div class="logo-text">Kurtex</div>
   </div>
   <div class="hdr-r">
+    <button class="btn-settings" id="settingsBtn" onclick="openSettings()">⚙️ Settings</button>
     <div class="d-pill"><strong id="dName">Driver</strong><span id="dTruck">—</span></div>
     <button class="btn-exit" onclick="logout()">Exit</button>
   </div>
@@ -296,144 +140,31 @@ body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;m
   </div>
 </div>
 
-<script>
-const TL={'pickup':'PickUp Trailer','drop':'Drop Trailer','general':'General'};
-let STEPS=[],S={step:0,inspId:null,photos:{},loc:null,user:null,type:'pickup'};
+<!-- SETTINGS MODAL -->
+<div class="modal-bg" id="settingsModal">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title">Settings</div>
+      <button class="modal-close" onclick="closeSettings()">✕ Close</button>
+    </div>
+    <div class="modal-body">
+      <div class="setting-item">
+        <div class="setting-info">
+          <div class="setting-label">Face ID / Fingerprint</div>
+          <div class="setting-desc">Use biometric to login quickly</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="setting-status not-setup" id="bioSetupBadge">Not Setup</span>
+          <button class="btn-setting" id="setupBioBtn" onclick="setupBiometric()">Setup</button>
+          <button class="btn-setting danger" id="removeBioBtn" onclick="removeBiometric()" style="display:none">Remove</button>
+        </div>
+      </div>
+      <div class="alert-box" id="settingsAlert"></div>
+    </div>
+  </div>
+</div>
 
-async function init(){
-  try{
-    const[mr,sr]=await Promise.all([fetch('/api/me'),fetch('/api/inspection-steps?type=pickup')]);
-    if(!mr.ok){location.href='/login';return;}
-    const u=await mr.json();
-    if(u.role!=='driver'){location.href='/agent/dashboard';return;}
-    STEPS=await sr.json(); S.user=u;
-    document.getElementById('dName').textContent=u.name||u.username;
-    document.getElementById('dTruck').textContent=[u.truck_model,u.truck_number].filter(Boolean).join(' · ')||'No truck assigned';
-    document.getElementById('iName').textContent=u.name||'—';
-    document.getElementById('iTruck').textContent=u.truck_model||'—';
-    document.getElementById('iNum').textContent=u.truck_number||'—';
-    updateStepCount(); loadRecent(); initGPS();
-  }catch(e){location.href='/login';}
-}
-
-async function setType(t){
-  S.type=t;
-  ['pickup','drop','general'].forEach(x=>{
-    document.getElementById('typeBtn'+x[0].toUpperCase()+x.slice(1)).classList.toggle('active',x===t);
-  });
-  STEPS=await(await fetch(`/api/inspection-steps?type=${t}`)).json();
-  updateStepCount();
-}
-function updateStepCount(){
-  const n=STEPS.length+' steps';
-  document.getElementById('iSteps').textContent=STEPS.length;
-  document.getElementById('startBadge').textContent=n;
-}
-function initGPS(){
-  if(!navigator.geolocation){setGPS(false,'GPS not available');return;}
-  navigator.geolocation.getCurrentPosition(p=>{S.loc={lat:p.coords.latitude,lng:p.coords.longitude};setGPS(true,`GPS locked — ${p.coords.latitude.toFixed(4)}, ${p.coords.longitude.toFixed(4)}`)},()=>setGPS(false,'Location access denied'),{enableHighAccuracy:true,timeout:12000});
-}
-function setGPS(ok,txt){document.getElementById('gpsDot').className='gps-dot '+(ok?'on':'err');document.getElementById('gpsText').textContent=txt;}
-async function loadRecent(){
-  try{
-    const rows=await(await fetch('/api/driver/inspections')).json();
-    const el=document.getElementById('recentList');
-    if(!rows.length){el.innerHTML='<p style="font-size:16px;color:var(--dim);font-weight:600">No inspections yet.</p>';return;}
-    el.innerHTML=rows.slice(0,5).map(i=>`
-      <div class="insp-row">
-        <div><div class="insp-meta">${fmtDate(i.submitted_at||i.started_at)}</div>
-        <div class="insp-info"><span class="type-chip ${i.inspection_type||'pickup'}">${TL[i.inspection_type||'pickup']}</span>${i.photo_count} photo${i.photo_count!==1?'s':''}</div></div>
-        <div class="status-pill ${i.status}">${i.status==='submitted'?'Submitted':'In Progress'}</div>
-      </div>`).join('');
-  }catch(e){}
-}
-async function startInspection(){
-  if(!STEPS.length){alert('No steps configured. Contact your dispatcher.');return;}
-  try{
-    const r=await fetch('/api/inspections/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({inspection_type:S.type})});
-    const d=await r.json();if(!r.ok)throw new Error();
-    S.inspId=d.inspectionId;S.step=0;S.photos={};
-    renderStep();showScreen('sInspect');
-  }catch(e){alert('Could not start. Check connection.');}
-}
-function renderStep(){
-  const i=S.step,s=STEPS[i];
-  document.getElementById('sCtr').textContent=`${i+1} / ${STEPS.length}`;
-  document.getElementById('progFill').style.width=`${(i/STEPS.length)*100}%`;
-  document.getElementById('sLabel').textContent=s.label;
-  document.getElementById('sEye').textContent=`STEP ${i+1} OF ${STEPS.length}`;
-  document.getElementById('sTitle').textContent=s.label;
-  document.getElementById('sDesc').textContent=s.instruction;
-  document.getElementById('stepDots').innerHTML=STEPS.map((_,j)=>`<div class="sdot${j<i?' done':j===i?' active':''}"></div>`).join('');
-  const p=S.photos[i];
-  const prev=document.getElementById('phPreview'),ph=document.getElementById('phPlaceholder');
-  const badge=document.getElementById('phBadge'),rb=document.getElementById('retakeBtn'),cb=document.getElementById('camBtn');
-  const pz=document.getElementById('photoZone'),bn=document.getElementById('btnNext');
-  document.getElementById('phErr').style.display='none';
-  document.getElementById('uploadOverlay').style.display='none';
-  if(p){
-    prev.src=p.path;prev.style.display='block';ph.style.display='none';
-    badge.style.display='flex';rb.style.display='block';cb.style.display='none';
-    pz.classList.add('captured');pz.onclick=null;
-    bn.disabled=false;bn.textContent=i===STEPS.length-1?'Review & Submit →':'Continue →';
-  }else{
-    prev.style.display='none';ph.style.display='flex';
-    badge.style.display='none';rb.style.display='none';cb.style.display='flex';
-    pz.classList.remove('captured');pz.onclick=triggerCam;
-    bn.disabled=true;bn.textContent='Continue →';
-  }
-}
-function triggerCam(){document.getElementById('camInput').click();}
-function retake(e){e.stopPropagation();S.photos[S.step]=null;renderStep();document.getElementById('camInput').click();}
-document.getElementById('camInput').addEventListener('change',async function(){
-  const file=this.files[0];if(!file)return;
-  const i=S.step;
-  const prev=document.getElementById('phPreview'),ph=document.getElementById('phPlaceholder');
-  const overlay=document.getElementById('uploadOverlay'),err=document.getElementById('phErr');
-  const reader=new FileReader();reader.onload=e=>{prev.src=e.target.result;prev.style.display='block';ph.style.display='none';};reader.readAsDataURL(file);
-  overlay.style.display='flex';err.style.display='none';
-  try{
-    const form=new FormData();form.append('photo',file);form.append('stepLabel',STEPS[i].label);
-    if(S.loc){form.append('latitude',S.loc.lat);form.append('longitude',S.loc.lng);}
-    const r=await fetch(`/api/inspections/${S.inspId}/step/${i+1}/photo`,{method:'POST',body:form});
-    const d=await r.json();if(!r.ok)throw new Error();
-    S.photos[i]={path:d.path};renderStep();
-  }catch(e){overlay.style.display='none';prev.style.display='none';ph.style.display='flex';err.textContent='Upload failed — try again.';err.style.display='block';}
-  this.value='';
-});
-function nextStep(){if(!S.photos[S.step])return;if(S.step===STEPS.length-1){showReview();return;}S.step++;renderStep();document.querySelector('.inspect-body').scrollTop=0;}
-function prevStep(){if(S.step===0){showScreen('sHome');return;}S.step--;renderStep();}
-function goBackToPhotos(){S.step=STEPS.length-1;renderStep();showScreen('sInspect');}
-function showReview(){
-  document.getElementById('revCount').textContent=Object.keys(S.photos).length;
-  document.getElementById('revGrid').innerHTML=STEPS.map((s,i)=>{const p=S.photos[i];return`<div class="r-thumb">${p?`<img src="${p.path}" loading="lazy"><div class="r-thumb-ok"><svg viewBox="0 0 10 10" fill="none"><polyline points="2,5 4.5,7.5 8,2.5" stroke="white" stroke-width="2"/></svg></div>`:`<div class="r-missing">✕</div>`}<div class="r-thumb-num">${i+1}</div></div>`;}).join('');
-  const tl=TL[S.type]||'Inspection';
-  document.getElementById('revType').textContent=tl+' Inspection';
-  document.getElementById('revDriver').textContent=S.user?.name||'—';
-  document.getElementById('revTruck').textContent=S.user?.truck_model||'—';
-  document.getElementById('revNum').textContent=S.user?.truck_number||'—';
-  document.getElementById('revTypeRow').textContent=tl;
-  document.getElementById('revTime').textContent=new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
-  if(S.loc){const lt=S.loc.lat.toFixed(5),lg=S.loc.lng.toFixed(5);document.getElementById('revLoc').innerHTML=`<a href="https://maps.google.com/?q=${lt},${lg}" target="_blank">${lt}, ${lg}</a>`;}
-  else document.getElementById('revLoc').textContent='Not available';
-  showScreen('sReview');
-}
-async function submitInspection(){
-  const btn=document.getElementById('btnSubmit'),txt=document.getElementById('submitTxt');
-  btn.disabled=true;txt.textContent='Submitting…';
-  try{
-    const body={notes:document.getElementById('notesInput').value};
-    if(S.loc){body.latitude=S.loc.lat;body.longitude=S.loc.lng;}
-    const r=await fetch(`/api/inspections/${S.inspId}/submit`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(!r.ok)throw new Error();
-    showScreen('sSuccess');
-  }catch(e){btn.disabled=false;txt.textContent='Submit Inspection';alert('Submission failed.');}
-}
-function newInspection(){S={step:0,inspId:null,photos:{},loc:S.loc,user:S.user,type:S.type};document.getElementById('notesInput').value='';loadRecent();showScreen('sHome');}
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
-function fmtDate(dt){if(!dt)return'N/A';const d=new Date(dt.includes('T')?dt:dt+'Z');return d.toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});}
-async function logout(){await fetch('/api/logout',{method:'POST'});location.href='/login';}
-init();
-</script>
+<script src="/js/driver.js"></script>
 </body>
 </html>
+

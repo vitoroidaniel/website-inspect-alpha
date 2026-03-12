@@ -3,98 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>FleetInspect — Sign In</title>
+<title>Kurtex — Sign In</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#f0f4ff;--surface:#fff;--surface2:#f7f8fc;
-  --border:#e4e8f0;--border2:#d0d6e8;
-  --text:#1a1d2e;--dim:#6b7280;--muted:#b0b8cc;
-  --brand:#4f6ef7;--brand2:#3a57e8;--brand-light:rgba(79,110,247,.1);
-  --green:#22c55e;--green-light:rgba(34,197,94,.1);
-  --red:#ef4444;--red-light:rgba(239,68,68,.1);
-  --radius:18px;--radius-sm:12px;
-}
-body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(79,110,247,.18) 0%,transparent 60%);pointer-events:none}
-
-/* HEADER */
-.hdr{padding:20px 28px;display:flex;align-items:center;gap:12px;position:relative;z-index:1}
-.logo-wrap{display:flex;align-items:center;gap:12px}
-.logo-mark{width:42px;height:42px;background:var(--brand);border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(79,110,247,.35)}
-.logo-mark svg{width:22px;height:22px}
-.logo-text{font-size:22px;font-weight:900;color:var(--text);letter-spacing:-.5px}
-.logo-text span{color:var(--brand)}
-
-main{flex:1;display:flex;align-items:center;justify-content:center;padding:16px;position:relative;z-index:1}
-
-.card{background:var(--surface);border-radius:28px;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.1),0 2px 8px rgba(0,0,0,.06);overflow:hidden}
-
-/* tabs */
-.tabs{display:flex;padding:16px 16px 0}
-.tab-btn{flex:1;padding:13px 10px;background:none;border:none;font-family:'Nunito',sans-serif;font-size:16px;font-weight:700;color:var(--dim);cursor:pointer;border-radius:var(--radius-sm) var(--radius-sm) 0 0;transition:all .18s;position:relative}
-.tab-btn.active{color:var(--brand);background:var(--brand-light)}
-.tab-btn.active::after{content:'';position:absolute;bottom:0;left:20%;right:20%;height:3px;background:var(--brand);border-radius:3px 3px 0 0}
-
-.card-body{padding:28px}
-.panel{display:none}.panel.active{display:block}
-
-.panel-title{font-size:26px;font-weight:900;color:var(--text);letter-spacing:-.5px;margin-bottom:6px}
-.panel-sub{font-size:16px;color:var(--dim);margin-bottom:26px;font-weight:500;line-height:1.5}
-
-/* form */
-.field{margin-bottom:18px}
-.field label{display:block;font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px}
-.field input{display:block;width:100%;background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:14px 18px;font-family:'Nunito',sans-serif;font-size:17px;font-weight:600;outline:none;transition:all .18s}
-.field input:focus{border-color:var(--brand);background:#fff;box-shadow:0 0 0 4px rgba(79,110,247,.12)}
-.field input::placeholder{color:var(--muted)}
-
-/* keep signed in */
-.keep-row{display:flex;align-items:center;gap:12px;margin-bottom:22px;cursor:pointer;user-select:none}
-.keep-box{width:24px;height:24px;border:2.5px solid var(--border2);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .18s}
-.keep-row input[type=checkbox]{display:none}
-.keep-row input:checked ~ .keep-box{background:var(--brand);border-color:var(--brand)}
-.keep-row input:checked ~ .keep-box svg{display:block}
-.keep-box svg{display:none;width:14px;height:14px}
-.keep-label{font-size:16px;font-weight:600;color:var(--dim)}
-
-/* buttons */
-.btn-primary{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--brand);color:#fff;border:none;padding:17px 24px;border-radius:var(--radius);font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 4px 20px rgba(79,110,247,.35);transition:all .18s;letter-spacing:-.2px}
-.btn-primary:hover{background:var(--brand2);transform:translateY(-1px);box-shadow:0 6px 28px rgba(79,110,247,.45)}
-.btn-primary:disabled{opacity:.45;cursor:not-allowed;transform:none}
-.btn-primary svg{width:20px;height:20px}
-
-.divider{display:flex;align-items:center;gap:14px;margin:20px 0}
-.divider-line{flex:1;height:1.5px;background:var(--border)}
-.divider span{font-size:14px;font-weight:700;color:var(--muted)}
-
-.btn-bio{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius);color:var(--text);padding:16px 24px;font-family:'Nunito',sans-serif;font-size:17px;font-weight:700;cursor:pointer;transition:all .18s}
-.btn-bio:hover{border-color:var(--brand);background:var(--brand-light);color:var(--brand)}
-.btn-bio svg{width:22px;height:22px;flex-shrink:0}
-.btn-bio .bio-label{display:flex;flex-direction:column;text-align:left}
-.btn-bio .bio-label span:first-child{font-size:17px;font-weight:700}
-.btn-bio .bio-label span:last-child{font-size:13px;font-weight:500;color:var(--dim)}
-
-.err-box{display:none;background:var(--red-light);border:2px solid rgba(239,68,68,.2);color:var(--red);font-size:15px;font-weight:600;padding:14px 16px;border-radius:var(--radius-sm);margin-top:16px;line-height:1.5}
-.succ-box{display:none;background:var(--green-light);border:2px solid rgba(34,197,94,.2);color:#16a34a;font-size:15px;font-weight:600;padding:14px 16px;border-radius:var(--radius-sm);margin-top:16px}
-
-.hint-box{margin-top:18px;padding:16px;background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-sm)}
-.hint-box p{font-size:14px;font-weight:600;color:var(--dim);line-height:2}
-.hint-box strong{color:var(--text)}
-
-footer{padding:18px 28px;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}
-footer span{font-size:14px;font-weight:600;color:var(--muted)}
-.status-dot{width:8px;height:8px;background:var(--green);border-radius:50%;display:inline-block;margin-right:7px;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-</style>
+<link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
 <header class="hdr">
   <div class="logo-wrap">
     <div class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="8" width="20" height="3.5" rx="1.75" fill="white"/><rect x="2" y="13" width="20" height="3.5" rx="1.75" fill="white"/><rect x="5" y="3" width="14" height="3.5" rx="1.75" fill="white"/><circle cx="7" cy="20.5" r="2.5" fill="white"/><circle cx="17" cy="20.5" r="2.5" fill="white"/></svg></div>
-    <div class="logo-text">Fleet<span>Inspect</span></div>
+    <div class="logo-text">Kurtex</div>
   </div>
+  <span class="dev-credit">by Rekka Software</span>
 </header>
 
 <main>
@@ -160,78 +79,10 @@ footer span{font-size:14px;font-weight:600;color:var(--muted)}
 
 <footer>
   <span><span class="status-dot"></span>System online</span>
-  <span>FleetInspect © 2025</span>
+  <span>© 2026 Kurtex by Rekka Software</span>
 </footer>
 
-<script>
-function setTab(t){
-  document.getElementById('tabDriver').classList.toggle('active', t==='driver');
-  document.getElementById('tabAgent').classList.toggle('active', t==='agent');
-  document.getElementById('panelDriver').classList.toggle('active', t==='driver');
-  document.getElementById('panelAgent').classList.toggle('active', t==='agent');
-}
-
-// Enter key support
-document.addEventListener('keydown', e => {
-  if (e.key !== 'Enter') return;
-  if (document.getElementById('panelDriver').classList.contains('active')) loginDriver();
-  else loginAgent();
-});
-
-async function doLogin(username, password, keepSignedIn, errEl, btnEl, txtEl) {
-  btnEl.disabled = true; txtEl.textContent = 'Signing in…'; errEl.style.display = 'none';
-  try {
-    const r = await fetch('/api/login', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username, password, keepSignedIn})});
-    const d = await r.json();
-    if (!r.ok) { showErr(errEl, d.error||'Invalid credentials'); btnEl.disabled=false; txtEl.textContent='Sign In'; return; }
-    window.location.href = d.role === 'driver' ? '/driver/inspect' : '/agent/dashboard';
-  } catch(e) { showErr(errEl, 'Connection error. Try again.'); btnEl.disabled=false; txtEl.textContent='Sign In'; }
-}
-
-function loginDriver() { doLogin(document.getElementById('dUser').value.trim(), document.getElementById('dPass').value, document.getElementById('dKeep').checked, document.getElementById('dErr'), document.getElementById('dLoginBtn'), document.getElementById('dLoginTxt')); }
-function loginAgent()  { doLogin(document.getElementById('aUser').value.trim(), document.getElementById('aPass').value, document.getElementById('aKeep').checked, document.getElementById('aErr'), document.getElementById('aLoginBtn'), document.getElementById('aLoginTxt')); }
-
-// ── WEBAUTHN ──
-const bioSupported = window.PublicKeyCredential && typeof window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function';
-
-async function checkBiometricAvailable() {
-  if (!bioSupported) return;
-  try {
-    const ok = await window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-    if (!ok) return;
-    // Detect platform
-    const ua = navigator.userAgent;
-    const isIOS = /iPhone|iPad|iPod/.test(ua);
-    const isMac = /Mac/.test(ua) && !isIOS;
-    const label = isIOS || isMac ? '  Face ID / Touch ID' : '  Fingerprint / Face Unlock';
-    ['dBioLabel','aBioLabel'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=label; });
-    document.getElementById('dBioBtn').style.display = 'flex';
-    document.getElementById('aBioBtn').style.display = 'flex';
-  } catch(e) {}
-}
-
-async function biometricLogin(panel) {
-  const errEl = document.getElementById(panel==='driver' ? 'dErr' : 'aErr');
-  errEl.style.display = 'none';
-  try {
-    const optRes = await fetch('/api/auth/webauthn/login-options', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username:''})});
-    const opts = await optRes.json();
-    opts.challenge = Uint8Array.from(opts.challenge, c=>c.charCodeAt(0));
-    if (opts.allowCredentials) opts.allowCredentials = opts.allowCredentials.map(c=>({...c, id: Uint8Array.from(atob(c.id), x=>x.charCodeAt(0))}));
-    const assertion = await navigator.credentials.get({ publicKey: opts });
-    const credId = btoa(String.fromCharCode(...new Uint8Array(assertion.rawId)));
-    const r = await fetch('/api/auth/webauthn/login', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({credentialId: credId})});
-    const d = await r.json();
-    if (!r.ok) { showErr(errEl, d.error||'Biometric login failed'); return; }
-    window.location.href = d.role === 'driver' ? '/driver/inspect' : '/agent/dashboard';
-  } catch(e) {
-    if (e.name !== 'NotAllowedError') showErr(errEl, 'Biometric login failed. Please use your password.');
-  }
-}
-
-function showErr(el, msg) { el.textContent = msg; el.style.display = 'block'; }
-
-checkBiometricAvailable();
-</script>
+<script src="/js/login.js"></script>
 </body>
 </html>
+
