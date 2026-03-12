@@ -59,7 +59,14 @@
             <div class="empty-txt">Select a driver to view inspections</div>
           </div>
           <div class="detail-content" id="detailContent">
-            <div class="detail-hd"><div class="detail-name" id="detailName">—</div><div class="detail-sub" id="detailSub"></div></div>
+            <div class="detail-hd">
+              <button class="mobile-back-btn" id="backToDriversBtn" onclick="backToDrivers()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>
+                All Drivers
+              </button>
+              <div class="detail-name" id="detailName">—</div>
+              <div class="detail-sub" id="detailSub"></div>
+            </div>
             <div class="insp-list" id="inspList"></div>
           </div>
         </div>
