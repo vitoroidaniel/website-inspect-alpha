@@ -661,3 +661,218 @@ footer span { font-size: 14px; font-weight: 600; color: var(--muted); }
   .photo-grid { grid-template-columns: repeat(3,1fr); }
   .form-row { grid-template-columns: 1fr; }
 }
+
+
+/* ============================================================
+   COMPREHENSIVE MOBILE RESPONSIVE STYLES
+   ============================================================ */
+
+/* ---- LOGIN PAGE MOBILE ---- */
+@media (max-width: 600px) {
+  .hdr { padding: 14px 18px; }
+  .logo-truck { width: 40px; height: 23px; }
+  .logo-text { font-size: 18px; }
+  .dev-credit { display: none; }
+
+  main { padding: 0; align-items: flex-start; }
+  .card { max-width: 100%; border-radius: 0 0 24px 24px; box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
+  .tabs { padding: 12px 12px 0; }
+  .tab-btn { font-size: 14px; padding: 11px 8px; }
+  .card-body { padding: 20px 18px; }
+  .panel-title { font-size: 22px; }
+  .panel-sub { font-size: 14px; margin-bottom: 20px; }
+  .field { margin-bottom: 14px; }
+  .field label { font-size: 14px; }
+  .field input { padding: 13px 16px; font-size: 16px; }
+  .keep-label { font-size: 14px; }
+  .btn-primary { padding: 15px 20px; font-size: 17px; }
+  .btn-bio { padding: 14px 18px; font-size: 15px; }
+  .btn-bio .bio-label span:first-child { font-size: 15px; }
+  footer { padding: 14px 18px; flex-direction: column; gap: 6px; text-align: center; }
+  footer span { font-size: 12px; }
+}
+
+/* ---- DRIVER APP MOBILE ---- */
+@media (max-width: 600px) {
+  /* Header */
+  .hdr-app { padding: 10px 14px; gap: 8px; }
+  .logo-truck { width: 36px; height: 21px; }
+  .logo-text { font-size: 17px; }
+  .hdr-r { gap: 6px; }
+  .d-pill strong { font-size: 13px; }
+  .d-pill span { display: none; }
+  .btn-exit { padding: 7px 12px; font-size: 13px; }
+  .btn-settings { padding: 7px 12px; font-size: 13px; }
+
+  /* Type bar */
+  .type-bar { padding: 12px 14px; }
+  .type-bar-label { font-size: 13px; margin-bottom: 8px; }
+  .type-btn { padding: 10px 6px; font-size: 13px; gap: 5px; }
+  .type-btn svg { width: 20px; height: 20px; }
+
+  /* Home screen */
+  .home-scroll { padding: 14px; }
+  .tiles { gap: 8px; margin-bottom: 12px; }
+  .tile { padding: 12px 14px; }
+  .tile-lbl { font-size: 12px; }
+  .tile-val { font-size: 15px; }
+  .gps-row { padding: 12px 14px; margin-bottom: 12px; }
+  #gpsText { font-size: 13px; }
+  .btn-start { padding: 16px 18px; font-size: 17px; margin-bottom: 16px; }
+  .btn-start .badge { font-size: 13px; padding: 4px 11px; }
+  .sec-hd { font-size: 13px; }
+  .insp-row { padding: 12px 14px; }
+  .insp-meta { font-size: 13px; }
+  .insp-info { font-size: 14px; }
+
+  /* Inspect screen */
+  .prog-hd { padding: 12px 14px; }
+  .prog-lbl { font-size: 15px; }
+  .prog-ctr { font-size: 14px; }
+  .step-dots { gap: 4px; margin-top: 8px; }
+  .sdot { width: 7px; height: 7px; }
+  .sdot.active { width: 18px; }
+  .inspect-body { padding: 16px 14px; gap: 12px; }
+  .step-num { font-size: 13px; }
+  .step-title { font-size: clamp(20px,5.5vw,26px); }
+  .step-desc { font-size: 14px; padding: 12px 14px; }
+  .ph-hint { font-size: 15px; }
+  .ph-sub { font-size: 13px; }
+  .photo-btns { gap: 8px; }
+  .btn-retake { padding: 12px; font-size: 15px; }
+  .btn-camera { padding: 12px; font-size: 15px; }
+  .inspect-footer { padding: 10px 14px; gap: 8px; }
+  .btn-back-step { padding: 13px; font-size: 15px; }
+  .btn-next { padding: 13px; font-size: 15px; }
+
+  /* Review screen */
+  .review-hd { padding: 18px 14px 16px; }
+  .review-title { font-size: 24px; }
+  .review-grid { grid-template-columns: repeat(5,1fr); gap: 4px; }
+  .review-body { padding: 14px; }
+  .btn-submit { padding: 16px 18px; font-size: 17px; }
+
+  /* Success screen */
+  .success-wrap { padding: 30px 20px; }
+  .success-ring { width: 76px; height: 76px; }
+  .success-title { font-size: 30px; }
+  .success-sub { font-size: 15px; }
+  .btn-new-insp { padding: 15px 22px; font-size: 16px; }
+
+  /* Settings modal */
+  .modal { border-radius: 20px 20px 0 0; position: fixed; bottom: 0; left: 0; right: 0; max-width: 100%; margin: 0; }
+  .modal-bg { align-items: flex-end; padding: 0; }
+  .setting-item { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .setting-item > div { width: 100%; justify-content: flex-start; }
+}
+
+/* ---- AGENT DASHBOARD MOBILE ---- */
+@media (max-width: 768px) {
+  /* Header compact */
+  .hdr-app { padding: 10px 14px; gap: 8px; }
+  .logo-truck { width: 36px; height: 21px; }
+  .logo-text { font-size: 17px; }
+  .role-chip { display: none; }
+  .agent-name { font-size: 13px; }
+  .btn-signout { padding: 7px 12px; font-size: 13px; }
+
+  /* App layout: sidebar hidden, bottom nav shown */
+  .app { flex-direction: column; height: calc(100vh - 52px); }
+  .sidebar { display: none; }
+  .panel-area { flex: 1; overflow: hidden; }
+
+  /* Bottom navigation bar */
+  .mobile-nav {
+    display: flex !important;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: #fff;
+    border-top: 2px solid var(--border);
+    z-index: 300;
+    padding: 6px 0 env(safe-area-inset-bottom, 6px);
+  }
+  .mobile-nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    background: none;
+    border: none;
+    padding: 8px 4px;
+    font-family: Nunito, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--dim);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .mobile-nav-btn svg { width: 22px; height: 22px; }
+  .mobile-nav-btn.active { color: var(--brand); }
+
+  /* Add bottom padding so content isn't hidden behind nav */
+  .panel-area { padding-bottom: 60px; }
+
+  /* Stats: 3 columns on tablet */
+  .stats-bar { grid-template-columns: repeat(3,1fr); gap: 8px; padding: 12px 14px; }
+  .stat-num { font-size: 22px; }
+  .stat-lbl { font-size: 11px; }
+  .stat-box { padding: 10px 12px; }
+
+  /* Overview: stack vertically */
+  .ov-wrap { flex-direction: column; }
+  .drivers-col { width: 100%; border-right: none; border-bottom: 2px solid var(--border); max-height: 280px; flex-shrink: 0; }
+  .detail-col { flex: 1; min-height: 0; }
+
+  /* History: horizontal scroll table */
+  .history-scroll { overflow-x: auto; }
+  .htbl { min-width: 600px; }
+  .feed-toolbar { padding: 10px 14px; gap: 8px; }
+  .page-title { font-size: 17px; }
+  .filter-chip { padding: 6px 12px; font-size: 13px; }
+
+  /* History panel: full-width overlay */
+  .hist-panel { position: fixed; inset: 0; width: 100% !important; z-index: 400; background: #fff; border: none; }
+  .hist-panel.closed { display: none; }
+
+  /* Admin: single column forms */
+  .form-row { grid-template-columns: 1fr; }
+  .admin-scroll { padding: 14px; }
+  .admin-title { font-size: 20px; }
+  .admin-tabs { flex-wrap: wrap; gap: 6px; }
+  .at-btn { padding: 8px 14px; font-size: 14px; }
+
+  /* Users table: horizontal scroll */
+  .utbl-wrap { overflow-x: auto; }
+  .utbl { min-width: 560px; }
+
+  /* Inspection cards */
+  .insp-card-hd { flex-wrap: wrap; }
+  .photo-grid { grid-template-columns: repeat(3,1fr); }
+  .photo-cell { grid-template-columns: repeat(3,1fr); }
+}
+
+@media (max-width: 480px) {
+  /* Stats: 2 columns on small phone */
+  .stats-bar { grid-template-columns: 1fr 1fr; }
+
+  /* Inspection cards: smaller */
+  .insp-card-date { font-size: 12px; }
+  .insp-card-sub { font-size: 14px; }
+  .photo-grid { grid-template-columns: repeat(3,1fr); }
+
+  /* Admin forms */
+  .finput { padding: 10px 12px; font-size: 14px; }
+  .btn-form { padding: 12px 18px; font-size: 15px; }
+
+  /* Edit modal: bottom sheet */
+  .modal { border-radius: 20px 20px 0 0; position: fixed; bottom: 0; left: 0; right: 0; max-width: 100%; }
+  .modal-bg { align-items: flex-end; padding: 0; }
+  .modal-body { padding: 16px; }
+  .modal-hd { padding: 16px 18px; }
+}
+
+/* Desktop: hide mobile nav */
+@media (min-width: 769px) {
+  .mobile-nav { display: none !important; }
+}
