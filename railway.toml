@@ -5,3 +5,10 @@ builder = "nixpacks"
 startCommand = "node server.js"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
+
+[environment]
+DATABASE_URL = "postgresql://postgres:QDMCeTBgQfovbdUlDROlcsVXYxcizJgl@postgres.railway.internal:5432/railway"
+
+[storage]
+uploads = { mountPoint = "/app/uploads", size = "1GB" }
+
