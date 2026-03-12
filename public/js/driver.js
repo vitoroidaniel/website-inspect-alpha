@@ -480,58 +480,91 @@ async function checkBiometricSetupForSettings() {
 
 async function setupBiometric() {
   const alertEl = document.getElementById('settingsAlert');
-  
+  const setupBtn = document.getElementById('setupBioBtn');
+
+  // Check browser support
+  if (!window.PublicKeyCredential) {
+    showAlert(alertEl, 'error', 'Face ID is not supported on this browser. Try Safari on iPhone/Mac or Chrome on Android.');
+    return;
+  }
+
+  // Loading state
+  setupBtn.disabled = true;
+  setupBtn.textContent = 'Scanning…';
+  alertEl.style.display = 'none';
+
   try {
-    // Get registration options
+    // Step 1: Get registration options from server
     const optRes = await fetch('/api/auth/webauthn/register-options', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
     });
-    
+
     if (!optRes.ok) {
-      showAlert(alertEl, 'error', 'Failed to get registration options');
+      showAlert(alertEl, 'error', 'Could not start Face ID setup. Please try again.');
       return;
     }
-    
+
     const opts = await optRes.json();
-    
-    // Convert challenge
-    opts.challenge = Uint8Array.from(opts.challenge, c => c.charCodeAt(0));
+
+    // Step 2: Convert challenge and user.id to Uint8Array (required by WebAuthn API)
+    opts.challenge = new TextEncoder().encode(opts.challenge);
     opts.user.id = Uint8Array.from(atob(opts.user.id), x => x.charCodeAt(0));
-    
-    // Create credential
+
+    // Step 3: Trigger Face ID / Touch ID scan on device
     const credential = await navigator.credentials.create({ publicKey: opts });
-    
-    // Convert credential ID to base64
+
+    // Step 4: Convert credential ID to base64 for storage
     const credId = btoa(String.fromCharCode(...new Uint8Array(credential.rawId)));
-    const publicKey = btoa(String.fromCharCode(...new Uint8Array(credential.response.getPublicKey())));
-    
-    // Send to server
+
+    // Step 5: Get public key safely (getPublicKey() may return null on some browsers)
+    let publicKey = '';
+    try {
+      const pkBuffer = credential.response.getPublicKey
+        ? credential.response.getPublicKey()
+        : null;
+      if (pkBuffer) {
+        publicKey = btoa(String.fromCharCode(...new Uint8Array(pkBuffer)));
+      }
+    } catch (_) {
+      // Public key extraction not critical for this implementation
+    }
+
+    // Step 6: Save credential to server
     const regRes = await fetch('/api/auth/webauthn/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        credentialId: credId, 
+      body: JSON.stringify({
+        credentialId: credId,
         publicKey: publicKey,
         transports: ['internal']
       })
     });
-    
+
     const regData = await regRes.json();
-    
+
     if (!regRes.ok) {
-      showAlert(alertEl, 'error', regData.error || 'Registration failed');
+      showAlert(alertEl, 'error', regData.error || 'Registration failed. Please try again.');
       return;
     }
-    
-    showAlert(alertEl, 'ok', 'Biometric setup successfully!');
+
+    showAlert(alertEl, 'ok', '✅ Face ID set up! You can now log in with Face ID on the login screen.');
     checkBiometricSetupForSettings();
-    
+
   } catch (e) {
-    console.error(e);
-    if (e.name !== 'NotAllowedError') {
-      showAlert(alertEl, 'error', 'Setup failed. Please try again.');
+    console.error('Face ID setup error:', e);
+    if (e.name === 'NotAllowedError') {
+      // User cancelled — no error shown
+    } else if (e.name === 'NotSupportedError') {
+      showAlert(alertEl, 'error', 'Face ID is not supported on this device.');
+    } else if (e.name === 'InvalidStateError') {
+      showAlert(alertEl, 'error', 'Face ID already registered on this device.');
+    } else {
+      showAlert(alertEl, 'error', 'Setup failed: ' + (e.message || 'Please try again.'));
     }
+  } finally {
+    setupBtn.disabled = false;
+    setupBtn.textContent = 'Setup';
   }
 }
 

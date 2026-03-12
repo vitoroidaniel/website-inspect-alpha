@@ -138,19 +138,19 @@ async function biometricLogin(panel) {
     }
     
     const opts = await optRes.json();
-    
-    // Convert challenge from base64
-    opts.challenge = Uint8Array.from(opts.challenge, c => c.charCodeAt(0));
-    
-    // Convert allowCredentials
-    if (opts.allowCredentials) {
+
+    // Convert challenge to Uint8Array (must match how setup encoded it)
+    opts.challenge = new TextEncoder().encode(opts.challenge);
+
+    // Convert allowCredentials IDs from base64 to Uint8Array
+    if (opts.allowCredentials && opts.allowCredentials.length > 0) {
       opts.allowCredentials = opts.allowCredentials.map(c => ({
         ...c,
         id: Uint8Array.from(atob(c.id), x => x.charCodeAt(0))
       }));
     }
-    
-    // Request biometric authentication
+
+    // Request Face ID / Touch ID scan on device
     const assertion = await navigator.credentials.get({ publicKey: opts });
     
     // Convert credential ID to base64
@@ -174,8 +174,12 @@ async function biometricLogin(panel) {
     window.location.href = d.role === 'driver' ? '/driver/inspect' : '/agent/dashboard';
     
   } catch (e) {
-    if (e.name !== 'NotAllowedError') {
-      showErr(errEl, 'Biometric login failed. Please use your password.');
+    if (e.name === 'NotAllowedError') {
+      // User cancelled — no error shown
+    } else if (e.name === 'NotSupportedError') {
+      showErr(errEl, 'Face ID is not supported on this device.');
+    } else {
+      showErr(errEl, 'Face ID login failed. Please use your password.');
     }
   }
 }
