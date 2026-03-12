@@ -37,15 +37,22 @@ async function init() {
     }
     
     G.isAdmin = u.role === 'superadmin';
-    
+
     document.getElementById('agentName').textContent = u.name || u.username;
     document.getElementById('roleBadge').textContent = G.isAdmin ? 'Admin' : 'Dispatcher';
-    
+
     if (G.isAdmin) {
       document.getElementById('navAdmin').style.display = 'flex';
       document.getElementById('adminSep').style.display = 'block';
+      // Show Admin button in mobile nav
+      const mNavAdmin = document.getElementById('mNavAdmin');
+      if (mNavAdmin) mNavAdmin.style.display = 'flex';
     }
-    
+
+    // Show mobile nav (CSS hides it on desktop via media query)
+    const mobileNav = document.getElementById('mobileNav');
+    if (mobileNav) mobileNav.style.display = '';
+
     loadStats();
     loadDrivers();
   } catch (e) {
@@ -110,21 +117,30 @@ function filterDrivers() {
 async function selectDriver(id) {
   const d = G.drivers.find(x => x.id === id);
   if (!d) return;
-  
+
   G.sel = d;
-  
-  document.querySelectorAll('.driver-row').forEach(el => 
+
+  document.querySelectorAll('.driver-row').forEach(el =>
     el.classList.toggle('sel', parseInt(el.dataset.id) === id)
   );
-  
+
   document.getElementById('detailEmpty').style.display = 'none';
   const content = document.getElementById('detailContent');
   content.style.display = 'flex';
-  
+
   document.getElementById('detailName').textContent = d.full_name;
-  document.getElementById('detailSub').innerHTML = 
+  document.getElementById('detailSub').innerHTML =
     `<span>${esc(d.truck_model || 'No truck')}${d.truck_number ? ' · ' + esc(d.truck_number) : ''}</span>
      <span>${d.submitted_count || 0} inspection${d.submitted_count !== 1 ? 's' : ''}</span>`;
+
+  // On mobile: hide drivers list, show detail panel full-width
+  if (window.innerWidth <= 768) {
+    document.querySelector('.drivers-col').style.display = 'none';
+    document.querySelector('.detail-col').style.display = 'flex';
+    document.getElementById('backToDriversBtn').style.display = 'flex';
+    // Scroll detail to top
+    document.getElementById('inspList').scrollTop = 0;
+  }
   
   const list = document.getElementById('inspList');
   list.innerHTML = '<div style="padding:14px;font-size:15px;color:var(--dim);font-weight:600">Loading…</div>';
@@ -230,7 +246,10 @@ function openLb(id, idx) {
   document.getElementById('lightbox').classList.add('open');
 }
 
-function openLbArr(arr, idx) {
+function openLbArr(key, idx) {
+  // key is a string ID into window._lbPhotos map (safe, no inline JSON)
+  const arr = window._lbPhotos && window._lbPhotos[key];
+  if (!arr || !arr.length) return;
   G.lbPhotos = arr;
   G.lbIdx = idx;
   showLbPhoto();
@@ -337,13 +356,18 @@ async function openHistPanel(id) {
     const tk = insp.inspection_type || 'pickup';
     const mapUrl = insp.latitude ? `https://www.google.com/maps?q=${insp.latitude},${insp.longitude}` : null;
     
+    // Store photos in global map so openLbArr can access them safely (no inline JSON)
+    window._lbPhotos = window._lbPhotos || {};
+    const lbKey = 'hist_' + id;
+    window._lbPhotos[lbKey] = photos;
+
     document.getElementById('hpBody').innerHTML = `
       <div style="margin-bottom:16px">
         <span class="type-badge ${tk}">${TL[tk] || tk}</span>
         <span style="font-size:14px;color:var(--dim);font-weight:600">${fmtDate(insp.submitted_at)}</span>
       </div>
-      ${photos.length ? `<div class="photo-grid">${photos.map((p, i) => 
-        `<div class="photo-cell" onclick="openLbArr(${JSON.stringify(photos).replace(/"/g, '"')},${i})">
+      ${photos.length ? `<div class="photo-grid">${photos.map((p, i) =>
+        `<div class="photo-cell" onclick="openLbArr('${lbKey}',${i})">
           <img src="${esc(p.file_path)}" loading="lazy">
           <div class="photo-cell-lbl">${esc(p.step_label || 'Step ' + p.step_number)}</div>
           <div class="photo-cell-num">${p.step_number}</div>
@@ -369,6 +393,18 @@ async function openHistPanel(id) {
 
 function closeHistPanel() {
   document.getElementById('histPanel').classList.add('closed');
+}
+
+// Mobile: go back from driver detail to drivers list
+function backToDrivers() {
+  document.querySelector('.drivers-col').style.display = '';
+  document.querySelector('.detail-col').style.display = '';
+  document.getElementById('detailContent').style.display = 'none';
+  document.getElementById('detailEmpty').style.display = 'flex';
+  document.getElementById('backToDriversBtn').style.display = 'none';
+  // Deselect driver
+  document.querySelectorAll('.driver-row').forEach(el => el.classList.remove('sel'));
+  G.sel = null;
 }
 
 // Admin functions
@@ -661,7 +697,13 @@ function showTab(name) {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(`tab${name}`).classList.add('active');
   document.getElementById(`nav${name}`).classList.add('active');
-  
+
+  // Sync mobile bottom nav active state
+  const mobileNavMap = { Overview: 'mNavOverview', Feed: 'mNavFeed', Admin: 'mNavAdmin' };
+  document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+  const mBtn = document.getElementById(mobileNavMap[name]);
+  if (mBtn) mBtn.classList.add('active');
+
   if (name === 'Feed') loadFeed();
   if (name === 'Admin') {
     loadAdminDrivers();
@@ -724,4 +766,5 @@ window.deleteUser = deleteUser;
 window.toggleStep = toggleStep;
 window.showTab = showTab;
 window.logout = logout;
+window.backToDrivers = backToDrivers;
 
