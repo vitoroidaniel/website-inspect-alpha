@@ -14,7 +14,8 @@ const G = {
   lbPhotos: [],
   lbIdx: 0,
   feedFilter: 'all',
-  feedRows: []
+  feedRows: [],
+  usersMap: {}
 };
 
 // Initialize on page load
@@ -152,7 +153,7 @@ async function selectDriver(id) {
             <span class="chev" id="chev-${i.id}">⌄</span>
           </div>
         </div>
-        <div class="card-body" id="body-${i.id}">
+        <div class="insp-card-body" id="body-${i.id}">
           <div id="cnt-${i.id}">
             <div style="font-size:14px;color:var(--dim);font-weight:600">Loading…</div>
           </div>
@@ -477,6 +478,7 @@ async function loadAdminDrivers() {
       return;
     }
     
+    users.forEach(u => G.usersMap[u.id] = u);
     el.innerHTML = `<div class="utbl-wrap"><table class="utbl">
       <thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Truck</th><th>Status</th><th>Actions</th></tr></thead>
       <tbody>${users.map(u => `<tr>
@@ -486,7 +488,7 @@ async function loadAdminDrivers() {
         <td style="font-size:13px;color:var(--dim)">${esc(u.truck_model || '—')}${u.truck_number ? ' · <strong>' + esc(u.truck_number) + '</strong>' : ''}</td>
         <td><span style="font-size:12px;font-weight:800;padding:4px 12px;border-radius:20px;background:${u.active ? 'var(--green-light)' : 'var(--red-light)'};color:${u.active ? '#16a34a' : 'var(--red)'}">${u.active ? 'Active' : 'Disabled'}</span></td>
         <td><div class="utbl-actions">
-          <button class="tbl-btn edit" onclick="openEditModal(${JSON.stringify(u).replace(/"/g, '"')})">✏️ Edit</button>
+          <button class="tbl-btn edit" onclick="openEditModal(${u.id})">✏️ Edit</button>
           <button class="tbl-btn ${u.active ? 'disable' : 'enable'}" onclick="toggleUser(${u.id},${u.active},'drivers')">${u.active ? 'Disable' : 'Enable'}</button>
           <button class="tbl-btn del" onclick="deleteUser(${u.id},'${esc(u.full_name)}','drivers')">🗑 Delete</button>
         </div></td>
@@ -505,6 +507,7 @@ async function loadAdminDispatchers() {
       return;
     }
     
+    users.forEach(u => G.usersMap[u.id] = u);
     el.innerHTML = `<div class="utbl-wrap"><table class="utbl">
       <thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Status</th><th>Actions</th></tr></thead>
       <tbody>${users.map(u => `<tr>
@@ -513,7 +516,7 @@ async function loadAdminDispatchers() {
         <td style="color:var(--dim);font-size:13px">${esc(u.email || '—')}</td>
         <td><span style="font-size:12px;font-weight:800;padding:4px 12px;border-radius:20px;background:${u.active ? 'var(--green-light)' : 'var(--red-light)'};color:${u.active ? '#16a34a' : 'var(--red)'}">${u.active ? 'Active' : 'Disabled'}</span></td>
         <td><div class="utbl-actions">
-          <button class="tbl-btn edit" onclick="openEditModal(${JSON.stringify(u).replace(/"/g, '"')})">✏️ Edit</button>
+          <button class="tbl-btn edit" onclick="openEditModal(${u.id})">✏️ Edit</button>
           <button class="tbl-btn ${u.active ? 'disable' : 'enable'}" onclick="toggleUser(${u.id},${u.active},'dispatchers')">${u.active ? 'Disable' : 'Enable'}</button>
           <button class="tbl-btn del" onclick="deleteUser(${u.id},'${esc(u.full_name)}','dispatchers')">🗑 Delete</button>
         </div></td>
@@ -522,7 +525,9 @@ async function loadAdminDispatchers() {
   } catch (e) {}
 }
 
-function openEditModal(user) {
+function openEditModal(id) {
+  const user = G.usersMap[id];
+  if (!user) return;
   document.getElementById('editUserId').value = user.id;
   document.getElementById('editName').value = user.full_name || '';
   document.getElementById('editUsername').value = user.username || '';
