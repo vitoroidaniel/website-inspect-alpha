@@ -15,7 +15,8 @@
     "bcryptjs": "^2.4.3",
     "sharp": "^0.33.2",
     "uuid": "^9.0.0",
-    "archiver": "^6.0.1"
+    "archiver": "^6.0.1",
+    "@simplewebauthn/server": "^9.0.3"
   }
 }
 

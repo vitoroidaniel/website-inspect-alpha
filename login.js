@@ -95,23 +95,17 @@ const bioSupported = window.PublicKeyCredential &&
 // Check if biometric is available
 async function initBiometricLogin() {
   if (!bioSupported) return;
-  
   try {
     const ok = await window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
     if (!ok) return;
-    
-    // Detect platform for label
     const ua = navigator.userAgent;
     const isIOS = /iPhone|iPad|iPod/.test(ua);
     const isMac = /Mac/.test(ua) && !isIOS;
     const label = isIOS || isMac ? 'Face ID / Touch ID' : 'Fingerprint / Face Unlock';
-    
     ['dBioLabel', 'aBioLabel'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.textContent = label;
     });
-    
-    // Show biometric buttons
     document.getElementById('dBioBtn').style.display = 'flex';
     document.getElementById('aBioBtn').style.display = 'flex';
   } catch (e) {
@@ -123,56 +117,67 @@ async function initBiometricLogin() {
 async function biometricLogin(panel) {
   const errEl = document.getElementById(panel === 'driver' ? 'dErr' : 'aErr');
   errEl.style.display = 'none';
-  
+
   try {
-    // Get login options
+    // Step 1: Get challenge + allowed credentials from server
     const optRes = await fetch(API.webAuthnLoginOptions, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: '' })
     });
-    
+
     if (!optRes.ok) {
-      showErr(errEl, 'Biometric not configured. Please login with password first, then set up in Settings.');
+      showErr(errEl, 'Biometric not set up. Please log in with password first, then enable Face ID in Settings.');
       return;
     }
-    
+
     const opts = await optRes.json();
 
-    // Convert challenge to Uint8Array (must match how setup encoded it)
-    opts.challenge = new TextEncoder().encode(opts.challenge);
-
-    // Convert allowCredentials IDs from base64 to Uint8Array
-    if (opts.allowCredentials && opts.allowCredentials.length > 0) {
-      opts.allowCredentials = opts.allowCredentials.map(c => ({
-        ...c,
-        id: Uint8Array.from(atob(c.id), x => x.charCodeAt(0))
-      }));
+    // No credentials registered anywhere
+    if (!opts.allowCredentials || opts.allowCredentials.length === 0) {
+      showErr(errEl, 'No biometric registered. Log in with password and set up Face ID in Settings.');
+      return;
     }
 
-    // Request Face ID / Touch ID scan on device
+    // Convert challenge from base64 to ArrayBuffer
+    opts.challenge = base64ToBuffer(opts.challenge);
+
+    // Convert each credential ID from base64 to ArrayBuffer
+    opts.allowCredentials = opts.allowCredentials.map(c => ({
+      ...c,
+      id: base64ToBuffer(c.id)
+    }));
+
+    // Step 2: Trigger native Face ID / Touch ID scan on device
     const assertion = await navigator.credentials.get({ publicKey: opts });
-    
-    // Convert credential ID to base64
-    const credId = btoa(String.fromCharCode(...new Uint8Array(assertion.rawId)));
-    
-    // Send to server
+
+    // Step 3: Send full assertion to server for cryptographic verification
     const r = await fetch(API.webAuthnLogin, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ credentialId: credId })
+      body: JSON.stringify({
+        id: assertion.id,
+        rawId: bufferToBase64(assertion.rawId),
+        type: assertion.type,
+        response: {
+          authenticatorData: bufferToBase64(assertion.response.authenticatorData),
+          clientDataJSON:    bufferToBase64(assertion.response.clientDataJSON),
+          signature:         bufferToBase64(assertion.response.signature),
+          userHandle:        assertion.response.userHandle
+            ? bufferToBase64(assertion.response.userHandle)
+            : null,
+        }
+      })
     });
-    
+
     const d = await r.json();
-    
     if (!r.ok) {
       showErr(errEl, d.error || 'Biometric login failed');
       return;
     }
-    
-    // Redirect based on role
+
     window.location.href = d.role === 'driver' ? '/driver/inspect' : '/agent/dashboard';
-    
+
   } catch (e) {
     if (e.name === 'NotAllowedError') {
       // User cancelled — no error shown
@@ -182,6 +187,19 @@ async function biometricLogin(panel) {
       showErr(errEl, 'Face ID login failed. Please use your password.');
     }
   }
+}
+
+// ── WebAuthn helpers ──────────────────────────────────────────────────────────
+function bufferToBase64(buffer) {
+  return btoa(String.fromCharCode(...new Uint8Array(buffer)));
+}
+
+function base64ToBuffer(b64) {
+  // Handle both standard base64 and base64url
+  const std = b64.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = std + '='.repeat((4 - std.length % 4) % 4);
+  const bin = atob(padded);
+  return Uint8Array.from(bin, c => c.charCodeAt(0)).buffer;
 }
 
 // Show error message
