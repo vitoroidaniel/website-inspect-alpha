@@ -25,16 +25,6 @@ Deployment: Railway | Nixpacks | Vercel
 - **Offline-capable** PWA with camera permissions
 - **Responsive** across phone/tablet/desktop
 
-## 🎮 Quick Start (Demo Credentials)
-
-```
-Driver:     driver / driver123
-Dispatcher: dispatch / dispatch123  
-Admin:      admin / admin123
-```
-
-**Live Demo:** [kurtex.rekka.so](https://kurtex.rekka.so) *(if deployed)*
-
 ## 🚀 Deployment
 
 ### Railway (Recommended - 1-click)
@@ -58,7 +48,7 @@ cd kurtex
 npm install
 
 # Start Postgres (Docker)
-docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=kurtex postgres:15
+docker run -d -p 5432:5432 -e POSTGRES_PASSWORD= postgres:15
 
 # Init DB & Run
 npm run db:setup
