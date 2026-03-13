@@ -4,38 +4,44 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Kurtex — Dashboard</title>
+<link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
+<link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+<meta name="theme-color" content="#4f6ef7">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/styles.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 <header class="hdr-app">
   <div class="logo-wrap">
-    <svg class="logo-truck" viewBox="0 0 56 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="4" width="34" height="18" rx="3" fill="#4f6ef7"/><rect x="2" y="6" width="30" height="14" rx="2" fill="#3a57e8"/><line x1="17" y1="6" x2="17" y2="20" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/><rect x="34" y="7" width="20" height="15" rx="3" fill="#4f6ef7"/><rect x="37" y="10" width="10" height="7" rx="1.5" fill="white" opacity="0.85"/><rect x="50" y="3" width="3" height="7" rx="1.5" fill="#6b7280"/><circle cx="9" cy="26" r="5" fill="#1a1d2e"/><circle cx="9" cy="26" r="2.5" fill="#4f6ef7"/><circle cx="25" cy="26" r="5" fill="#1a1d2e"/><circle cx="25" cy="26" r="2.5" fill="#4f6ef7"/><circle cx="44" cy="26" r="5" fill="#1a1d2e"/><circle cx="44" cy="26" r="2.5" fill="#4f6ef7"/></svg>
+    <img src="img/logo-inspection.png" class="logo-img logo-img-sm" alt="Kurtex logo">
     <div class="logo-text">Kurtex</div>
   </div>
   <div class="role-chip" id="roleBadge">Dispatcher</div>
   <div class="hdr-r">
     <span class="agent-name" id="agentName">Loading…</span>
-    <button class="btn-signout" onclick="logout()">Sign Out</button>
+    <button class="btn-signout" onclick="logout()">
+      <span class="material-icons-round" style="font-size:16px;vertical-align:-3px">logout</span> Sign Out
+    </button>
   </div>
 </header>
+
 <div class="app">
   <nav class="sidebar">
     <button class="nav-btn active" id="navOverview" onclick="showTab('Overview')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
-      Fleet
+      <span class="material-icons-round">dashboard</span>Fleet
     </button>
     <div class="nav-sep"></div>
     <button class="nav-btn" id="navFeed" onclick="showTab('Feed')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
-      History
+      <span class="material-icons-round">history</span>History
     </button>
     <div class="nav-sep" id="adminSep" style="display:none"></div>
     <button class="nav-btn" id="navAdmin" onclick="showTab('Admin')" style="display:none">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      Admin
+      <span class="material-icons-round">manage_accounts</span>Admin
     </button>
   </nav>
+
   <div class="panel-area">
 
     <!-- OVERVIEW -->
@@ -55,14 +61,13 @@
         </div>
         <div class="detail-col">
           <div class="detail-empty" id="detailEmpty">
-            <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg></div>
+            <div class="empty-icon"><span class="material-icons-round" style="font-size:40px;color:var(--muted)">assignment</span></div>
             <div class="empty-txt">Select a driver to view inspections</div>
           </div>
           <div class="detail-content" id="detailContent">
             <div class="detail-hd">
               <button class="mobile-back-btn" id="backToDriversBtn" onclick="backToDrivers()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>
-                All Drivers
+                <span class="material-icons-round" style="font-size:18px">chevron_left</span>All Drivers
               </button>
               <div class="detail-name" id="detailName">—</div>
               <div class="detail-sub" id="detailSub"></div>
@@ -86,16 +91,34 @@
           </div>
           <div class="history-scroll">
             <table class="htbl">
-              <thead><tr>
-                <th>ID</th><th>Status</th><th>Date</th><th>Truck</th><th>Driver</th><th>Type</th><th>Actions</th>
-              </tr></thead>
+              <thead><tr><th>ID</th><th>Status</th><th>Date</th><th>Asset</th><th>Driver</th><th>Type</th><th>Actions</th></tr></thead>
               <tbody id="feedBody"><tr><td colspan="7" style="padding:20px;font-size:15px;color:var(--dim);font-weight:600">Loading…</td></tr></tbody>
             </table>
           </div>
         </div>
         <div class="hist-panel closed" id="histPanel">
-          <div class="hp-hd"><div class="hp-title" id="hpTitle">Inspection</div><button class="hp-close" onclick="closeHistPanel()">✕ Close</button></div>
+          <div class="hp-hd">
+            <div class="hp-title" id="hpTitle">Inspection</div>
+            <button class="hp-close" onclick="closeHistPanel()">
+              <span class="material-icons-round" style="font-size:16px;vertical-align:-3px">close</span> Close
+            </button>
+          </div>
           <div class="hp-body" id="hpBody"></div>
+        </div>
+        <div class="asset-panel closed" id="assetPanel">
+          <div class="ap-hd">
+            <div style="display:flex;align-items:center;gap:10px;min-width:0">
+              <span class="material-icons-round" style="font-size:22px;color:var(--brand);flex-shrink:0">directions_car</span>
+              <div style="min-width:0">
+                <div class="ap-title" id="apTitle">Asset</div>
+                <div class="ap-sub" id="apSub"></div>
+              </div>
+            </div>
+            <button class="hp-close" onclick="closeAssetPanel()">
+              <span class="material-icons-round" style="font-size:16px;vertical-align:-3px">close</span> Close
+            </button>
+          </div>
+          <div class="ap-body" id="apBody"></div>
         </div>
       </div>
     </div>
@@ -104,14 +127,23 @@
     <div class="tab" id="tabAdmin">
       <div class="admin-scroll">
         <div class="admin-title">Admin Panel</div>
-        <div class="admin-sub">Manage drivers, dispatchers, and inspection settings</div>
+        <div class="admin-sub">Manage drivers, dispatchers, assets, and inspection steps</div>
         <div class="admin-tabs">
-          <button class="at-btn active" onclick="setAdminTab('drivers')">🚛 Drivers</button>
-          <button class="at-btn" onclick="setAdminTab('dispatchers')">📋 Dispatchers</button>
-          <button class="at-btn" onclick="setAdminTab('steps')">📝 Steps</button>
+          <button class="at-btn active" onclick="setAdminTab('drivers')">
+            <span class="material-icons-round" style="font-size:16px;vertical-align:-3px">local_shipping</span> Drivers
+          </button>
+          <button class="at-btn" onclick="setAdminTab('dispatchers')">
+            <span class="material-icons-round" style="font-size:16px;vertical-align:-3px">assignment_ind</span> Dispatchers
+          </button>
+          <button class="at-btn" onclick="setAdminTab('steps')">
+            <span class="material-icons-round" style="font-size:16px;vertical-align:-3px">checklist</span> Steps
+          </button>
+          <button class="at-btn" onclick="setAdminTab('assets')">
+            <span class="material-icons-round" style="font-size:16px;vertical-align:-3px">directions_car</span> Assets
+          </button>
         </div>
 
-        <!-- DRIVERS TAB -->
+        <!-- DRIVERS -->
         <div class="admin-section active" id="asDrivers">
           <div class="sec-hd">Add New Driver</div>
           <div class="form-row">
@@ -126,14 +158,17 @@
             <div class="fg"><label class="flbl">Truck Model</label><input class="finput" id="drTruck" placeholder="Freightliner Cascadia 2022"></div>
             <div class="fg"><label class="flbl">Truck Number</label><input class="finput" id="drTruckNum" placeholder="TRK-003"></div>
           </div>
-          <button class="btn-form" onclick="createDriver()"><span>Add Driver</span><span>→</span></button>
+          <button class="btn-form" onclick="createDriver()">
+            <span><span class="material-icons-round" style="font-size:16px;vertical-align:-3px">person_add</span> Add Driver</span>
+            <span class="material-icons-round" style="font-size:16px">arrow_forward</span>
+          </button>
           <div class="alert-box" id="drAlert"></div>
           <div style="height:28px"></div>
           <div class="sec-hd">All Drivers</div>
           <div id="driversTable"><div style="font-size:15px;color:var(--dim);font-weight:600">Loading…</div></div>
         </div>
 
-        <!-- DISPATCHERS TAB -->
+        <!-- DISPATCHERS -->
         <div class="admin-section" id="asDispatchers">
           <div class="sec-hd">Add New Dispatcher</div>
           <div class="form-row">
@@ -144,18 +179,79 @@
             <div class="fg"><label class="flbl">Email</label><input class="finput" type="email" id="diEmail" placeholder="sarah@company.com"></div>
             <div class="fg"><label class="flbl">Password *</label><input class="finput" type="password" id="diPass" placeholder="min 6 characters"></div>
           </div>
-          <button class="btn-form" onclick="createDispatcher()"><span>Add Dispatcher</span><span>→</span></button>
+          <button class="btn-form" onclick="createDispatcher()">
+            <span><span class="material-icons-round" style="font-size:16px;vertical-align:-3px">person_add</span> Add Dispatcher</span>
+            <span class="material-icons-round" style="font-size:16px">arrow_forward</span>
+          </button>
           <div class="alert-box" id="diAlert"></div>
           <div style="height:28px"></div>
           <div class="sec-hd">All Dispatchers</div>
           <div id="dispatchersTable"><div style="font-size:15px;color:var(--dim);font-weight:600">Loading…</div></div>
         </div>
 
-        <!-- STEPS TAB -->
+        <!-- STEPS -->
         <div class="admin-section" id="asSteps">
-          <div class="sec-hd">Inspection Steps</div>
+          <div class="sec-hd">Manage Inspection Steps</div>
+          <div class="add-step-form">
+            <div class="add-step-form-title">
+              <span class="material-icons-round" style="font-size:18px;vertical-align:-4px;color:var(--brand)">add_circle</span>
+              Add New Step
+            </div>
+            <div class="form-row">
+              <div class="fg">
+                <label class="flbl">Inspection Type</label>
+                <select class="finput" id="newStepType">
+                  <option value="pickup">PickUp</option>
+                  <option value="drop">Drop</option>
+                  <option value="general">General</option>
+                </select>
+              </div>
+              <div class="fg"><label class="flbl">Step Label *</label><input class="finput" id="newStepLabel" placeholder="e.g. Engine Compartment"></div>
+            </div>
+            <div class="fg" style="margin-bottom:14px">
+              <label class="flbl">Instruction *</label>
+              <textarea class="finput" id="newStepInstruction" placeholder="Describe what the driver should photograph…" style="min-height:80px;resize:vertical"></textarea>
+            </div>
+            <button class="btn-form" onclick="addStep()">
+              <span><span class="material-icons-round" style="font-size:16px;vertical-align:-3px">add</span> Add Step</span>
+              <span class="material-icons-round" style="font-size:16px">arrow_forward</span>
+            </button>
+            <div class="alert-box" id="stepAlert"></div>
+          </div>
+          <div style="height:24px"></div>
+          <div class="sec-hd">All Steps</div>
           <div id="stepsTable"><div style="font-size:15px;color:var(--dim);font-weight:600">Loading…</div></div>
         </div>
+
+        <!-- ASSETS -->
+        <div class="admin-section" id="asAssets">
+          <div class="sec-hd">Add New Trailer / Asset</div>
+          <div class="form-row">
+            <div class="fg"><label class="flbl">Asset Number *</label><input class="finput" id="assetNum" placeholder="W98754"></div>
+            <div class="fg"><label class="flbl">Year</label><input class="finput" id="assetYear" placeholder="2022"></div>
+          </div>
+          <div class="form-row">
+            <div class="fg"><label class="flbl">Make</label><input class="finput" id="assetMake" placeholder="Utility Trailer"></div>
+            <div class="fg"><label class="flbl">Model</label><input class="finput" id="assetModel" placeholder="DuraPlate"></div>
+          </div>
+          <div class="form-row">
+            <div class="fg"><label class="flbl">VIN</label><input class="finput" id="assetVin" placeholder="3UTVS2534N8536419"></div>
+            <div class="fg"><label class="flbl">License Plate</label><input class="finput" id="assetPlate" placeholder="IL 9R5227"></div>
+          </div>
+          <div class="fg" style="margin-bottom:14px">
+            <label class="flbl">Notes</label>
+            <input class="finput" id="assetNotes" placeholder="Optional notes">
+          </div>
+          <button class="btn-form" onclick="createAsset()">
+            <span><span class="material-icons-round" style="font-size:16px;vertical-align:-3px">add</span> Add Asset</span>
+            <span class="material-icons-round" style="font-size:16px">arrow_forward</span>
+          </button>
+          <div class="alert-box" id="assetAlert"></div>
+          <div style="height:28px"></div>
+          <div class="sec-hd">All Assets</div>
+          <div id="assetsTable"><div style="font-size:15px;color:var(--dim);font-weight:600">Loading…</div></div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -164,7 +260,12 @@
 <!-- EDIT USER MODAL -->
 <div class="modal-bg" id="editModal">
   <div class="modal">
-    <div class="modal-hd"><div class="modal-title" id="editModalTitle">Edit User</div><button class="modal-close" onclick="closeEditModal()">✕ Close</button></div>
+    <div class="modal-hd">
+      <div class="modal-title" id="editModalTitle">Edit User</div>
+      <button class="modal-close" onclick="closeEditModal()">
+        <span class="material-icons-round" style="font-size:16px;vertical-align:-3px">close</span> Close
+      </button>
+    </div>
     <div class="modal-body">
       <input type="hidden" id="editUserId">
       <div class="form-row">
@@ -181,40 +282,46 @@
           <div class="fg"><label class="flbl">Truck Number</label><input class="finput" id="editTruckNum" placeholder="TRK-001"></div>
         </div>
       </div>
-      <button class="btn-form" onclick="saveEditUser()"><span>Save Changes</span><span>→</span></button>
+      <button class="btn-form" onclick="saveEditUser()">
+        <span><span class="material-icons-round" style="font-size:16px;vertical-align:-3px">save</span> Save Changes</span>
+        <span class="material-icons-round" style="font-size:16px">arrow_forward</span>
+      </button>
       <div class="alert-box" id="editAlert"></div>
     </div>
   </div>
 </div>
 
-<!-- LIGHTBOX -->
+<!-- LIGHTBOX with flag button -->
 <div class="lightbox" id="lightbox" onclick="closeLb()">
-  <button class="lb-close" onclick="closeLb()">✕ Close</button>
+  <button class="lb-close" onclick="closeLb()">
+    <span class="material-icons-round" style="font-size:16px;vertical-align:-3px">close</span> Close
+  </button>
   <img class="lb-img" id="lbImg" src="" alt="">
   <div class="lb-meta" id="lbMeta"></div>
-  <div class="lb-nav" onclick="event.stopPropagation()">
-    <button onclick="lbNav(-1)">← Prev</button>
-    <button onclick="lbNav(1)">Next →</button>
+  <div class="lb-controls" onclick="event.stopPropagation()">
+    <div class="lb-nav">
+      <button onclick="lbNav(-1)"><span class="material-icons-round" style="font-size:18px;vertical-align:-4px">chevron_left</span> Prev</button>
+      <button onclick="lbNav(1)">Next <span class="material-icons-round" style="font-size:18px;vertical-align:-4px">chevron_right</span></button>
+    </div>
+    <button class="lb-flag-btn" id="lbFlagBtn" onclick="toggleFlag()">
+      <span class="material-icons-round" style="font-size:16px;vertical-align:-3px">flag</span> Flag Photo
+    </button>
   </div>
 </div>
 
 <!-- MOBILE BOTTOM NAV -->
 <nav class="mobile-nav" id="mobileNav" style="display:none">
   <button class="mobile-nav-btn active" id="mNavOverview" onclick="showTab('Overview')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
-    Fleet
+    <span class="material-icons-round">dashboard</span>Fleet
   </button>
   <button class="mobile-nav-btn" id="mNavFeed" onclick="showTab('Feed')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
-    History
+    <span class="material-icons-round">history</span>History
   </button>
   <button class="mobile-nav-btn" id="mNavAdmin" onclick="showTab('Admin')" style="display:none">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-    Admin
+    <span class="material-icons-round">manage_accounts</span>Admin
   </button>
 </nav>
 
 <script src="/js/agent.js"></script>
 </body>
 </html>
-

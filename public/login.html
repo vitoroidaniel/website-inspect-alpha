@@ -4,26 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Kurtex — Sign In</title>
+<link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
+<link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+<meta name="theme-color" content="#4f6ef7">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/styles.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 <header class="hdr">
   <div class="logo-wrap">
-    <svg class="logo-truck" viewBox="0 0 56 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="0" y="4" width="34" height="18" rx="3" fill="#4f6ef7"/>
-      <rect x="2" y="6" width="30" height="14" rx="2" fill="#3a57e8"/>
-      <line x1="17" y1="6" x2="17" y2="20" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-      <rect x="34" y="7" width="20" height="15" rx="3" fill="#4f6ef7"/>
-      <rect x="37" y="10" width="10" height="7" rx="1.5" fill="white" opacity="0.85"/>
-      <rect x="50" y="3" width="3" height="7" rx="1.5" fill="#6b7280"/>
-      <circle cx="9" cy="26" r="5" fill="#1a1d2e"/>
-      <circle cx="9" cy="26" r="2.5" fill="#4f6ef7"/>
-      <circle cx="25" cy="26" r="5" fill="#1a1d2e"/>
-      <circle cx="25" cy="26" r="2.5" fill="#4f6ef7"/>
-      <circle cx="44" cy="26" r="5" fill="#1a1d2e"/>
-      <circle cx="44" cy="26" r="2.5" fill="#4f6ef7"/>
-    </svg>
+    <img src="img/logo-inspection.png" class="logo-img" alt="Kurtex logo">
     <div class="logo-text">Kurtex</div>
   </div>
   <span class="dev-credit">by Rekka Software</span>
@@ -32,8 +24,12 @@
 <main>
   <div class="card">
     <div class="tabs">
-      <button class="tab-btn active" id="tabDriver" onclick="setTab('driver')">🚛 Driver</button>
-      <button class="tab-btn" id="tabAgent" onclick="setTab('agent')">📋 Dispatcher / Admin</button>
+      <button class="tab-btn active" id="tabDriver" onclick="setTab('driver')">
+        <span class="material-icons-round" style="font-size:18px;vertical-align:-4px;margin-right:5px">local_shipping</span>Driver
+      </button>
+      <button class="tab-btn" id="tabAgent" onclick="setTab('agent')">
+        <span class="material-icons-round" style="font-size:18px;vertical-align:-4px;margin-right:5px">assignment_ind</span>Dispatcher / Admin
+      </button>
     </div>
     <div class="card-body">
 
@@ -41,21 +37,30 @@
       <div class="panel active" id="panelDriver">
         <div class="panel-title">Driver Login</div>
         <div class="panel-sub">Sign in with your username and password to start your inspection.</div>
-        <div class="field"><label>Username or Email</label><input type="text" id="dUser" autocapitalize="none" autocomplete="username" placeholder="your username"></div>
-        <div class="field"><label>Password</label><input type="password" id="dPass" autocomplete="current-password" placeholder="your password"></div>
+        <div class="field">
+          <label>Username or Email</label>
+          <input type="text" id="dUser" autocapitalize="none" autocomplete="username" placeholder="your username">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="dPass" autocomplete="current-password" placeholder="your password">
+        </div>
         <label class="keep-row">
           <input type="checkbox" id="dKeep">
           <div class="keep-box"><svg viewBox="0 0 14 14" fill="none"><polyline points="2,7 5.5,10.5 12,3" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           <span class="keep-label">Keep me signed in for 30 days</span>
         </label>
         <button class="btn-primary" id="dLoginBtn" onclick="loginDriver()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          <span class="material-icons-round" style="font-size:20px">login</span>
           <span id="dLoginTxt">Sign In</span>
         </button>
         <div class="divider"><div class="divider-line"></div><span>or</span><div class="divider-line"></div></div>
         <button class="btn-bio" id="dBioBtn" onclick="biometricLogin('driver')" style="display:none">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 12c0-2.21 1.79-4 4-4s4 1.79 4 4-1.79 4-4 4"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
-          <div class="bio-label"><span id="dBioLabel">Use Face ID / Fingerprint</span><span>Quick biometric sign in</span></div>
+          <span class="material-icons-round bio-icon">fingerprint</span>
+          <div class="bio-label">
+            <span id="dBioLabel">Face ID / Fingerprint</span>
+            <span>Quick biometric sign in</span>
+          </div>
         </button>
         <div class="err-box" id="dErr"></div>
       </div>
@@ -64,21 +69,30 @@
       <div class="panel" id="panelAgent">
         <div class="panel-title">Welcome back</div>
         <div class="panel-sub">Sign in with your dispatcher or admin credentials.</div>
-        <div class="field"><label>Username or Email</label><input type="text" id="aUser" autocapitalize="none" autocomplete="username" placeholder="your username"></div>
-        <div class="field"><label>Password</label><input type="password" id="aPass" autocomplete="current-password" placeholder="your password"></div>
+        <div class="field">
+          <label>Username or Email</label>
+          <input type="text" id="aUser" autocapitalize="none" autocomplete="username" placeholder="your username">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="aPass" autocomplete="current-password" placeholder="your password">
+        </div>
         <label class="keep-row">
           <input type="checkbox" id="aKeep">
           <div class="keep-box"><svg viewBox="0 0 14 14" fill="none"><polyline points="2,7 5.5,10.5 12,3" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           <span class="keep-label">Keep me signed in for 30 days</span>
         </label>
         <button class="btn-primary" id="aLoginBtn" onclick="loginAgent()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          <span class="material-icons-round" style="font-size:20px">login</span>
           <span id="aLoginTxt">Sign In</span>
         </button>
         <div class="divider"><div class="divider-line"></div><span>or</span><div class="divider-line"></div></div>
         <button class="btn-bio" id="aBioBtn" onclick="biometricLogin('agent')" style="display:none">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 12c0-2.21 1.79-4 4-4s4 1.79 4 4-1.79 4-4 4"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
-          <div class="bio-label"><span id="aBioLabel">Use Face ID / Fingerprint</span><span>Quick biometric sign in</span></div>
+          <span class="material-icons-round bio-icon">fingerprint</span>
+          <div class="bio-label">
+            <span id="aBioLabel">Face ID / Fingerprint</span>
+            <span>Quick biometric sign in</span>
+          </div>
         </button>
         <div class="err-box" id="aErr"></div>
         <div class="hint-box">
@@ -98,4 +112,3 @@
 <script src="/js/login.js"></script>
 </body>
 </html>
-
